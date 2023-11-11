@@ -4,7 +4,21 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
   {
     path: '/',
-    component: () => import('@/views/Home.vue'),
+    component: () => import('@/MainLayout.vue'),
+    children: [
+      {
+        path: "/",
+        redirect: "/about"
+      },
+      {
+        path: "/about",
+        component: () => import("@/views/About.vue"),
+      },
+      {
+        path: "/story",
+        component: () => import("@/views/Story.vue"),
+      }
+    ]
   },
   {
     path: '/login',
