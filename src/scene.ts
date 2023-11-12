@@ -57,7 +57,7 @@ export class Scene {
 
   constructor() {
     this.text = "";
-    this.id = Math.random();
+    this.id = Math.floor(Math.random() * 100);
   }
 
   random() {

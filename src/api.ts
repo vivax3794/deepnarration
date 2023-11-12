@@ -1,7 +1,7 @@
 import { Scene } from "@/scene";
 import { useDiscordStore } from "./store/discord";
 
-export async function submitImagesVideo(scenes: Scene[]) {
+export async function submitImagesVideo(scenes: Scene[]): Promise<number> {
   const url = "https://deepnarrationapi.matissetec.dev/getImagesVideo";
 
   let discord = useDiscordStore();
@@ -18,6 +18,7 @@ export async function submitImagesVideo(scenes: Scene[]) {
     ttsTiming.push(-1);
   }
 
+  let request_id = Math.floor(Math.random() * 100);
   await fetch(url, {
     method: "Post",
     body: JSON.stringify({
@@ -29,7 +30,40 @@ export async function submitImagesVideo(scenes: Scene[]) {
 
       imagePrompts: imagePrompts,
       themes: themes,
-      ttsTiming: ttsTiming
+      ttsTimings: ttsTiming,
+
+      id: request_id,
     })
   });
+
+  return request_id;
+}
+
+interface JobStatus {
+  position: number | null,
+  total_time: number,
+}
+
+export async function getJobsStatus(id: number): Promise<JobStatus> {
+  let url = "https://deepnarrationapi.matissetec.dev/queue";
+  let response = await fetch(url);
+  let data = await response.text();
+
+  let [jobs_raw, time_raw] = data.split("<br />");
+  let jobs = JSON.parse(jobs_raw);
+  let time = /current job is about (\d+) seconds/.exec(time_raw)[1];
+
+  let position = null;
+  let index = 0;
+  for (let job of jobs) {
+    if (job.request_data.id == id) {
+      position = index;
+    }
+    index++;
+  }
+
+  return {
+    position: position,
+    total_time: Number.parseInt(time)
+  }
 }

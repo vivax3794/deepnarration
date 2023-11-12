@@ -21,9 +21,15 @@
     </v-expansion-panels>
 
     <v-expand-transition>
-      <v-card class="margin" v-if="show_result" title="Results" color="teal-darken-3">
-        PLACEHOLDER: The results are only on discord for now. This image will literally never load!
-        <v-skeleton-loader id="loader" type="image" :loading="true"></v-skeleton-loader>
+      <v-card class="margin" v-if="show_result" :color="result_color()">
+        <v-card-title>
+          <v-btn icon="mdi-close" variant="plain" @click="close_results"></v-btn>
+          Result - {{ our_job ? 'Yours' : `Queue: ${our_position}` }}
+        </v-card-title>
+        <v-progress-linear :model-value="time_remaing / max_time * 100" height="20" color="orange"
+          :striped="time_remaing > max_time">
+          Estimated Progress
+        </v-progress-linear>
       </v-card>
     </v-expand-transition>
 
@@ -101,6 +107,15 @@ import { VForm } from "vuetify/lib/components/index.mjs";
 import * as api from "@/api";
 
 const show_result = ref(false);
+const our_job = ref(false);
+const time_remaing = ref(-1);
+const max_time = ref(-1);
+const our_position = ref(-1);
+
+let req_id = 0;
+let update_id: ReturnType<typeof setInterval> | undefined = undefined;
+let last_position: number | null = -1;
+
 const form: Ref<VForm | null> = ref(null);
 
 async function submit() {
@@ -110,7 +125,55 @@ async function submit() {
   }
 
   show_result.value = true;
-  // await api.submitImagesVideo(scenes.value);
+  our_job.value = false;
+  time_remaing.value = -1;
+  max_time.value = -1;
+  last_position = -1;
+  our_position.value = -1;
+
+  req_id = await api.submitImagesVideo(scenes.value);
+  clearInterval(update_id);
+  update_id = setInterval(update_job_status, 500);
 }
+
+async function update_job_status() {
+  time_remaing.value += 0.5;
+  let status = await api.getJobsStatus(req_id);
+
+  if (status.position === null) {
+    our_job.value = true;
+  } else {
+    our_job.value = false;
+    our_position.value = status.position + 1;
+  }
+
+  if (status.position !== last_position) {
+    last_position = status.position;
+    time_remaing.value = 0;
+  }
+  max_time.value = status.total_time;
+
+  if (time_remaing.value >= max_time.value && our_job.value) {
+    clearInterval(update_id);
+  }
+}
+
+function result_color(): string {
+  if (our_job.value) {
+    if (time_remaing.value > max_time.value) {
+      return "green";
+    } else {
+      return "teal";
+    }
+  } else {
+    return "gray";
+  }
+}
+
+function close_results() {
+  show_result.value = false;
+  clearInterval(update_id);
+}
+
 const scenes = ref([new Scene()]);
 </script>
