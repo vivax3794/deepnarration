@@ -1,3 +1,5 @@
+import { useDiscordStore } from "./store/discord";
+
 type Sentence = { type: "Adjective" | "Character" | "Location" | "Action" | "Object" | "Emotion" } | string;
 
 
@@ -55,11 +57,22 @@ export class Scene {
   text: string;
   id: number;
   duration: number;
+  images: { url: string, id: number }[];
+  strength: number;
 
   constructor() {
+    let discord = useDiscordStore();
+
     this.text = "";
     this.id = Math.floor(Math.random() * 100);
-    this.duration = 0;
+    this.duration = 5;
+    this.images = [
+      {
+        url: `https://cdn.discordapp.com/avatars/${discord.user_id}/${discord.avatar}.png` || "https://static-cdn.jtvnw.net/jtv_user_pictures/869b1615-8185-4264-9dcf-73deb66a6597-profile_image-70x70.png",
+        id: 1
+      }
+    ];
+    this.strength = 0.7;
   }
 
   random() {

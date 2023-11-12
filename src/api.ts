@@ -1,7 +1,7 @@
 import { Scene } from "@/scene";
 import { useDiscordStore } from "./store/discord";
 
-export async function submitImagesVideo(scenes: Scene[], tts: boolean): Promise<number | null> {
+export async function submitImagesVideo(scenes: Scene[], tts: boolean, generate_images: boolean): Promise<number | null> {
   const url = "https://deepnarrationapi.matissetec.dev/getImagesVideo";
 
   let discord = useDiscordStore();
@@ -9,10 +9,13 @@ export async function submitImagesVideo(scenes: Scene[], tts: boolean): Promise<
   let imagePrompts = [];
   let themes = [];
   let ttsTiming = [];
+  let strengths = [];
 
+  let time = 0;
+  let last_strength = null;
   for (let scene of scenes) {
     imagePrompts.push({
-      "prompt": scene.text
+      "prompt": scene.text.replaceAll("\n", ".")
     });
     themes.push("None");
     if (tts) {
@@ -20,24 +23,36 @@ export async function submitImagesVideo(scenes: Scene[], tts: boolean): Promise<
     } else {
       ttsTiming.push(scene.duration);
     }
+    if (last_strength !== null) {
+      strengths.push(`${Math.floor(time * 10) - 1}:(${last_strength})`);
+    }
+    strengths.push(`${Math.floor(time * 10)}:(${scene.strength})`);
+    last_strength = scene.strength;
+    time += scene.duration;
   }
 
   let request_id = Math.floor(Math.random() * 100);
+  let body: any = {
+    audioName: "",
+    discordName: `<@${discord.user_id}>`,
+    discordUsername: `${discord.username} - [NEW FRONTEND]`,
+    strength: strengths.join(","),
+    useTts: tts,
+
+    imagePrompts: imagePrompts,
+    themes: themes,
+    ttsTimings: ttsTiming,
+
+    id: request_id,
+  };
+
+  if (!generate_images) {
+    body.images = scenes.map((scene) => scene.images.map((image) => image.url));
+  }
+
   let response = await fetch(url, {
     method: "Post",
-    body: JSON.stringify({
-      audioName: "",
-      discordName: `<@${discord.user_id}>`,
-      discordUsername: discord.username,
-      strength: "0:(0.70)", // WTF IS THIS
-      useTts: tts,
-
-      imagePrompts: imagePrompts,
-      themes: themes,
-      ttsTimings: ttsTiming,
-
-      id: request_id,
-    })
+    body: JSON.stringify(body)
   });
 
   if (response.status === 200) {

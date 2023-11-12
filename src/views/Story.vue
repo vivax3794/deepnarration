@@ -19,9 +19,6 @@
         <v-container>
           <v-row>
             <v-col>
-              <v-btn color="green" width="100%" @click="scenes.push(new Scene())"><v-icon>mdi-plus</v-icon></v-btn>
-            </v-col>
-            <v-col>
               <v-dialog :width="500">
                 <template v-slot:activator="{ props }">
                   <v-btn v-bind="props" width="100%" color="red"><v-icon>mdi-restart</v-icon></v-btn>
@@ -46,17 +43,26 @@
           <v-row>
             <v-col>
               <v-btn width="100%" :color="tts ? 'green' : 'red'" @click="tts = !tts">
-                <v-icon>{{ tts ? "mdi-microphone" : "mdi-microphone-off" }}</v-icon> TTS
+                <v-icon>{{ tts ? "mdi-microphone" : "mdi-microphone-off" }}</v-icon>
+                {{ tts ? "TTS" : "No Audio" }}
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-btn width="100%" :color="generate_images ? 'green' : 'red'" @click="generate_images = !generate_images">
+                <v-icon>{{ generate_images ? "mdi-image-auto-adjust" : "mdi-web" }}</v-icon>
+                {{ generate_images ? "100% AI Images" : "Inserted keyframe images" }}
               </v-btn>
             </v-col>
           </v-row>
         </v-container>
         <transition-group name="list">
           <div v-for="(scene, index) in scenes" :key="scene.id" class="margin">
-            <SceneView :scene="scene" :tts="tts" @delete="scenes.splice(index, 1)">
+            <SceneView :scene="scene" :tts="tts" :generate_images="generate_images" @delete="scenes.splice(index, 1)">
             </SceneView>
           </div>
         </transition-group>
+        <v-btn class="margin" style="margin-bottom: 100px;" color="green" width="100%"
+          @click="scenes.push(new Scene())"><v-icon>mdi-plus</v-icon></v-btn>
       </v-form>
     </div>
   </div>
@@ -106,6 +112,7 @@ import { watch } from "vue";
 const scenes = useStorage("Story-Scenes", [new Scene()]);
 scenes.value = scenes.value.map((scene) => Object.assign(new Scene(), scene));
 const tts = useStorage("Story-Tts", true);
+const generate_images = useStorage("Story-Images", true);
 
 const can_submit = ref(true);
 
@@ -133,7 +140,7 @@ async function submit() {
   can_submit.value = false;
   setTimeout(() => can_submit.value = true, 2000);
 
-  let result = await api.submitImagesVideo(scenes.value, tts.value);
+  let result = await api.submitImagesVideo(scenes.value, tts.value, generate_images.value);
   if (result === null) {
     ratelimited.value = true;
     return;
