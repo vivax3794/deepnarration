@@ -99,12 +99,15 @@
 </style>
 
 <script setup lang="ts">
+import { useStorage } from "@vueuse/core";
 import { Scene } from "@/scene";
 import { ref, Ref } from "vue";
 import SceneView from "@/components/Scene.vue";
 import { VForm } from "vuetify/lib/components/index.mjs";
 
 import * as api from "@/api";
+
+const scenes = useStorage("Story-Scenes", [new Scene()]);
 
 const show_result = ref(false);
 const our_job = ref(false);
@@ -153,7 +156,7 @@ async function update_job_status() {
   }
   max_time.value = status.total_time;
 
-  if (time_remaing.value >= max_time.value && our_job.value) {
+  if (time_remaing.value > max_time.value && our_job.value) {
     clearInterval(update_id);
   }
 }
@@ -175,5 +178,4 @@ function close_results() {
   clearInterval(update_id);
 }
 
-const scenes = ref([new Scene()]);
 </script>
