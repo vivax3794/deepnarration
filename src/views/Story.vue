@@ -1,25 +1,5 @@
 <template>
   <div id="page">
-    <h1>Faq</h1>
-    <v-expansion-panels multiple>
-      <v-expansion-panel title="How to use">
-        <v-expansion-panel-text>
-          Add a few scenes and enter a story for them, a TTS will be speaking them back, for now no voice controls.
-
-          Scene length is currently limited to 75 words
-
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-      <v-expansion-panel title="Models Used">
-        <v-expansion-panel-text>
-          now using dreamsharperxl10alpha2 and SD XL 1.0 refined for the deforum run
-          <br /><br />
-          The system currently has only 1 node running the API with limited queing, so if someone else is using it the
-          generation start after theirs is done
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-    </v-expansion-panels>
-
     <v-expand-transition>
       <v-card class="margin" v-if="show_result" :color="result_color()">
         <v-card-title>
@@ -57,13 +37,23 @@
               </v-dialog>
             </v-col>
             <v-col>
-              <v-btn color="blue" width="100%" type="submit" :disabled="!can_submit">Submit</v-btn>
+              <v-btn color="blue" width="100%" type="submit" :disabled="!can_submit">
+                Submit -
+                {{ scenes.reduce((acc, sc) => acc + sc.duration, 0).toFixed(2) }}S
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-btn width="100%" :color="tts ? 'green' : 'red'" @click="tts = !tts">
+                <v-icon>{{ tts ? "mdi-microphone" : "mdi-microphone-off" }}</v-icon> TTS
+              </v-btn>
             </v-col>
           </v-row>
         </v-container>
         <transition-group name="list">
           <div v-for="(scene, index) in scenes" :key="scene.id" class="margin">
-            <SceneView :scene="scene" @delete="scenes.splice(index, 1)">
+            <SceneView :scene="scene" :tts="tts" @delete="scenes.splice(index, 1)">
             </SceneView>
           </div>
         </transition-group>
@@ -115,6 +105,7 @@ import { watch } from "vue";
 
 const scenes = useStorage("Story-Scenes", [new Scene()]);
 scenes.value = scenes.value.map((scene) => Object.assign(new Scene(), scene));
+const tts = useStorage("Story-Tts", true);
 
 const can_submit = ref(true);
 
@@ -125,6 +116,7 @@ const our_job = ref(false);
 const time_remaing = ref(-1);
 const max_time = ref(-1);
 const our_position = ref(-1);
+
 
 let req_id = 0;
 let update_id: ReturnType<typeof setInterval> | undefined = undefined;
@@ -141,7 +133,7 @@ async function submit() {
   can_submit.value = false;
   setTimeout(() => can_submit.value = true, 2000);
 
-  let result = await api.submitImagesVideo(scenes.value);
+  let result = await api.submitImagesVideo(scenes.value, tts.value);
   if (result === null) {
     ratelimited.value = true;
     return;

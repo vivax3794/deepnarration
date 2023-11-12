@@ -1,7 +1,7 @@
 import { Scene } from "@/scene";
 import { useDiscordStore } from "./store/discord";
 
-export async function submitImagesVideo(scenes: Scene[]): Promise<number | null> {
+export async function submitImagesVideo(scenes: Scene[], tts: boolean): Promise<number | null> {
   const url = "https://deepnarrationapi.matissetec.dev/getImagesVideo";
 
   let discord = useDiscordStore();
@@ -15,7 +15,11 @@ export async function submitImagesVideo(scenes: Scene[]): Promise<number | null>
       "prompt": scene.text
     });
     themes.push("None");
-    ttsTiming.push(-1);
+    if (tts) {
+      ttsTiming.push(-1);
+    } else {
+      ttsTiming.push(scene.duration);
+    }
   }
 
   let request_id = Math.floor(Math.random() * 100);
@@ -26,7 +30,7 @@ export async function submitImagesVideo(scenes: Scene[]): Promise<number | null>
       discordName: `<@${discord.user_id}>`,
       discordUsername: discord.username,
       strength: "0:(0.70)", // WTF IS THIS
-      useTts: true,
+      useTts: tts,
 
       imagePrompts: imagePrompts,
       themes: themes,

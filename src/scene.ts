@@ -54,10 +54,12 @@ function sample<T>(arr: T[]): T {
 export class Scene {
   text: string;
   id: number;
+  duration: number;
 
   constructor() {
     this.text = "";
     this.id = Math.floor(Math.random() * 100);
+    this.duration = 0;
   }
 
   random() {
