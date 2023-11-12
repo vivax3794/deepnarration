@@ -2,8 +2,9 @@
   <div id="container">
     <v-btn id="delete" color="red" icon="mdi-delete" variant="plain" size="x-large" @click="$emit('delete')"></v-btn>
     <v-card id="main">
-      <v-text-field v-model="scene.text" placeholder="Scene description" append-inner-icon="mdi-shuffle"
-        @click:append-inner="scene.random()"></v-text-field>
+      <v-textarea v-model="scene.text" label="Scene description" append-inner-icon="mdi-shuffle" clearable auto-grow
+        rows="1" counter="75" :counter-value="(v) => v.split(' ').length"
+        :rules="[(v) => v.split(' ').length <= 75 || 'Max 75 words']" @click:append-inner="scene.random()"></v-textarea>
     </v-card>
   </div>
 </template>
