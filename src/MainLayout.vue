@@ -1,11 +1,13 @@
 <template>
   <v-app>
     <v-app-bar>
-      <v-btn icon="mdi-menu" @click.stop="navdraw = !navdraw">
+      <v-app-bar-nav-icon @click.stop="navdraw = !navdraw"></v-app-bar-nav-icon>
+      <v-app-bar-title>Deepnarration</v-app-bar-title>
 
-      </v-btn>
-      <img id="avatar" :src="`https://cdn.discordapp.com/avatars/${discord_info.user_id}/${discord_info.avatar}.png`"
-        alt="Avatar">
+      <v-avatar id="avatar"
+        :image="`https://cdn.discordapp.com/avatars/${discord_info.user_id}/${discord_info.avatar}.png`" alt="Avatar">
+
+      </v-avatar>
       <div id="username">{{ discord_info.username }}</div>
     </v-app-bar>
     <v-navigation-drawer expand-on-hover rail v-model="navdraw">
@@ -22,11 +24,12 @@
 
 <style scoped>
 #avatar {
-  height: 100%;
+  height: 60%;
 }
 
 #username {
-  font-size: 2rem;
+  font-size: 1rem;
+  margin-right: 30px;
 }
 </style>
 
@@ -39,11 +42,13 @@ import { ref } from "vue";
 
 const discord_token = useStorage("discord", "");
 const discord_info = useDiscordStore();
-const navdraw = ref(false);
+const navdraw = ref(true);
 
 onBeforeMount(() => {
   const fragment = new URLSearchParams(window.location.hash.slice(1));
   const [access_token, token_type] = [fragment.get('access_token'), fragment.get('token_type')];
+
+  return;
 
   if (access_token !== null) {
     discord_token.value = `${token_type} ${access_token}`;
