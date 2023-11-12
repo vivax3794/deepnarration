@@ -2,7 +2,8 @@
   <div id="container">
     <v-btn id="delete" color="red" icon="mdi-delete" variant="plain" size="x-large" @click="$emit('delete')"></v-btn>
     <v-card id="main">
-      <v-text-field v-model="scene.text" placeholder="Scene description"></v-text-field>
+      <v-text-field v-model="scene.text" placeholder="Scene description" append-inner-icon="mdi-shuffle"
+        @click:append-inner="scene.random()"></v-text-field>
     </v-card>
   </div>
 </template>

@@ -41,6 +41,9 @@
               </template>
             </v-dialog>
           </v-col>
+          <v-col>
+            <v-btn color="blue" width="100%">Submit</v-btn>
+          </v-col>
         </v-row>
         <v-row v-for="(scene, index) in scenes">
           <v-col>

@@ -48,8 +48,6 @@ onBeforeMount(() => {
   const fragment = new URLSearchParams(window.location.hash.slice(1));
   const [access_token, token_type] = [fragment.get('access_token'), fragment.get('token_type')];
 
-  return;
-
   if (access_token !== null) {
     discord_token.value = `${token_type} ${access_token}`;
     setTimeout(() => document.location.hash = "", 100)
