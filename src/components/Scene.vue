@@ -4,7 +4,8 @@
     <v-card id="main">
       <v-textarea v-model="scene.text" label="Scene description" append-inner-icon="mdi-shuffle" clearable auto-grow
         rows="1" counter="75" :counter-value="(v) => v.split(' ').length"
-        :rules="[(v) => v.split(' ').length <= 75 || 'Max 75 words']" @click:append-inner="scene.random()"></v-textarea>
+        :rules="[(v) => v.split(' ').length <= 75 || 'Max 75 words', (v) => v != '' || 'Cant be empty']"
+        @click:append-inner="scene.random()"></v-textarea>
     </v-card>
   </div>
 </template>

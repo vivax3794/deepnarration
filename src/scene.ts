@@ -53,9 +53,11 @@ function sample<T>(arr: T[]): T {
 
 export class Scene {
   text: string;
+  id: number;
 
   constructor() {
     this.text = "";
+    this.id = Math.random();
   }
 
   random() {

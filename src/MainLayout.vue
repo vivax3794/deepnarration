@@ -40,6 +40,7 @@ import { onBeforeMount } from "vue";
 import { useDiscordStore } from "@/store/discord"
 import { ref } from "vue";
 
+
 const discord_token = useStorage("discord", "");
 const discord_info = useDiscordStore();
 const navdraw = ref(true);
