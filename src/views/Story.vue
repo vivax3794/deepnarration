@@ -26,9 +26,10 @@
           <v-btn icon="mdi-close" variant="plain" @click="close_results"></v-btn>
           Result - {{ our_job ? 'Yours' : `Queue: ${our_position}` }}
         </v-card-title>
+        Results will be on discord, for now.
         <v-progress-linear :model-value="time_remaing / max_time * 100" height="20" color="orange"
           :striped="time_remaing > max_time">
-          Estimated Progress
+          Estimated Progress - If inaccurate blame matisse
         </v-progress-linear>
       </v-card>
     </v-expand-transition>
@@ -56,7 +57,7 @@
               </v-dialog>
             </v-col>
             <v-col>
-              <v-btn color="blue" width="100%" type="submit">Submit</v-btn>
+              <v-btn color="blue" width="100%" type="submit" :disabled="!can_submit">Submit</v-btn>
             </v-col>
           </v-row>
         </v-container>
@@ -69,6 +70,10 @@
       </v-form>
     </div>
   </div>
+
+  <v-dialog width="auto" v-model="ratelimited">
+    <v-alert type="error" title="Ratelimited" text="Wait for some of your jobs to finish"></v-alert>
+  </v-dialog>
 </template>
 
 <style scoped>
@@ -106,10 +111,16 @@ import SceneView from "@/components/Scene.vue";
 import { VForm } from "vuetify/lib/components/index.mjs";
 
 import * as api from "@/api";
+import { watch } from "vue";
 
 const scenes = useStorage("Story-Scenes", [new Scene()]);
+scenes.value = scenes.value.map((scene) => Object.assign(new Scene(), scene));
+
+const can_submit = ref(true);
 
 const show_result = ref(false);
+const ratelimited = ref(false);
+
 const our_job = ref(false);
 const time_remaing = ref(-1);
 const max_time = ref(-1);
@@ -127,6 +138,17 @@ async function submit() {
     return;
   }
 
+  can_submit.value = false;
+  setTimeout(() => can_submit.value = true, 2000);
+
+  let result = await api.submitImagesVideo(scenes.value);
+  if (result === null) {
+    ratelimited.value = true;
+    return;
+  } else {
+    req_id = result;
+  }
+
   show_result.value = true;
   our_job.value = false;
   time_remaing.value = -1;
@@ -134,13 +156,13 @@ async function submit() {
   last_position = -1;
   our_position.value = -1;
 
-  req_id = await api.submitImagesVideo(scenes.value);
   clearInterval(update_id);
-  update_id = setInterval(update_job_status, 500);
+  update_job_status();
+  update_id = setInterval(update_job_status, 2000);
 }
 
 async function update_job_status() {
-  time_remaing.value += 0.5;
+  time_remaing.value += 2;
   let status = await api.getJobsStatus(req_id);
 
   if (status.position === null) {

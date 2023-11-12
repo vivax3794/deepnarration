@@ -1,7 +1,7 @@
 import { Scene } from "@/scene";
 import { useDiscordStore } from "./store/discord";
 
-export async function submitImagesVideo(scenes: Scene[]): Promise<number> {
+export async function submitImagesVideo(scenes: Scene[]): Promise<number | null> {
   const url = "https://deepnarrationapi.matissetec.dev/getImagesVideo";
 
   let discord = useDiscordStore();
@@ -19,7 +19,7 @@ export async function submitImagesVideo(scenes: Scene[]): Promise<number> {
   }
 
   let request_id = Math.floor(Math.random() * 100);
-  await fetch(url, {
+  let response = await fetch(url, {
     method: "Post",
     body: JSON.stringify({
       audioName: "",
@@ -36,7 +36,11 @@ export async function submitImagesVideo(scenes: Scene[]): Promise<number> {
     })
   });
 
-  return request_id;
+  if (response.status === 200) {
+    return request_id;
+  } else {
+    return null;
+  }
 }
 
 interface JobStatus {
