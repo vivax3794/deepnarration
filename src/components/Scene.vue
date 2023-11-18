@@ -7,7 +7,6 @@
         <v-expand-transition>
           <v-tab value="image" v-if="!story.generate_images">
             Images
-            <v-icon color="red" v-if="scene.images.length === 0">mdi-alert-minus</v-icon>
           </v-tab>
         </v-expand-transition>
       </v-tabs>
@@ -16,8 +15,7 @@
         <v-window v-model="tab">
           <v-window-item value="basic">
             <v-textarea v-model="scene.text" label="Scene description" append-inner-icon="mdi-shuffle" clearable auto-grow
-              rows="1" counter="75" :counter-value="(v) => v.split(' ').length"
-              :rules="[(v) => v.split(' ').length <= 75 || 'Max 75 words', (v) => v != '' || 'Cant be empty']"
+              rows="1" counter="75" :counter-value="(v) => v.split(' ').length" :rules="description_rules"
               @click:append-inner="scene.random()" @update:focused="(ev) => updateDurationBasedOnTts(ev)"></v-textarea>
 
             <v-tooltip location="right" :disabled="!story.tts">
@@ -55,9 +53,9 @@
                   </v-expansion-panel-title>
                   <v-expansion-panel-text>
                     <v-text-field clearable @click:clear="image.url = ''" prepend-inner-icon="mdi-web" label="Image url"
-                      v-model="image.url"></v-text-field>
-                    <v-btn color="red" width="100%"
-                      @click="scene.images.splice(index, 1)"><v-icon>mdi-delete</v-icon></v-btn> <br />
+                      v-model="image.url" :rules="image_url_rules"></v-text-field>
+                    <v-btn color="red" width="100%" @click="delete_image(index)"><v-icon>mdi-delete</v-icon></v-btn>
+                    <br />
                     <img :src="image.url" />
                   </v-expansion-panel-text>
                 </v-expansion-panel>
@@ -87,6 +85,14 @@ import { watch } from "vue";
 import { Scene } from "@/scene";
 import { ref } from "vue";
 import { useStoryStore } from "@/store/story";
+
+const description_rules = [
+  (v: string) => v.split(' ').length <= 75 || 'Max 75 words',
+  (v: string) => v != '' || 'Cant be empty'
+];
+const image_url_rules = [
+  (v: string) => v.length > 0 || "Must not be empty",
+];
 
 const tab = ref("basic");
 const story = useStoryStore();
@@ -125,6 +131,13 @@ function addImage() {
       url: "",
       id: Math.floor(Math.random() * 100)
     })
+  }
+}
+
+function delete_image(index: number) {
+  props.scene.images.splice(index, 1);
+  if (props.scene.images.length == 0) {
+    addImage();
   }
 }
 </script>
