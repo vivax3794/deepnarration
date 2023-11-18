@@ -54,7 +54,7 @@
                     </template>
                   </v-expansion-panel-title>
                   <v-expansion-panel-text>
-                    <v-text-field clearable prepend-inner-icon="mdi-web" label="Image url"
+                    <v-text-field clearable @click:clear="image.url = ''" prepend-inner-icon="mdi-web" label="Image url"
                       v-model="image.url"></v-text-field>
                     <v-btn color="red" width="100%"
                       @click="scene.images.splice(index, 1)"><v-icon>mdi-delete</v-icon></v-btn> <br />
