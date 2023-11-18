@@ -54,8 +54,18 @@
                 {{ story.generate_images ? "100% AI Images" : "Inserted keyframe images" }}
               </v-btn>
             </v-col>
+            <v-col>
+              <v-btn width="100%" :color="story.peak_detection ? 'green' : 'red'"
+                @click="story.peak_detection = !story.peak_detection">
+                <v-icon>{{ story.peak_detection ? "mdi-music" : "mdi-pen" }}</v-icon>
+                {{ story.peak_detection ? "Peak Detection" : "Manual Strength Values" }}
+              </v-btn>
+            </v-col>
           </v-row>
         </v-container>
+        <v-expand-transition>
+          <PeakDetection v-if="story.peak_detection"></PeakDetection>
+        </v-expand-transition>
         <transition-group name="list">
           <div v-for="(scene, index) in story.scenes" :key="scene.id" class="margin">
             <SceneView :scene="scene" @delete="story.delete_scene(index)">
@@ -103,6 +113,7 @@
 <script setup lang="ts">
 import { ref, Ref } from "vue";
 import SceneView from "@/components/Scene.vue";
+import PeakDetection from "@/components/PeakDetection.vue"
 import { VForm } from "vuetify/lib/components/index.mjs";
 
 import * as api from "@/api";
@@ -139,7 +150,7 @@ async function submit() {
   can_submit.value = false;
   setTimeout(() => can_submit.value = true, 2000);
 
-  let result = await api.submitImagesVideo(story.scenes, story.tts, story.generate_images);
+  let result = await api.submitImagesVideo();
   if (result === null) {
     error_text.value = "Error with request - you might have been ratelimited";
     error.value = true;

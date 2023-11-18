@@ -1,10 +1,12 @@
 import { Scene } from "@/scene";
 import { useDiscordStore } from "./store/discord";
+import { useStoryStore } from "./store/story";
 
-export async function submitImagesVideo(scenes: Scene[], tts: boolean, generate_images: boolean): Promise<number | null> {
+export async function submitImagesVideo(): Promise<number | null> {
   const url = "https://deepnarrationapi.matissetec.dev/getImagesVideo";
 
   let discord = useDiscordStore();
+  let story = useStoryStore();
 
   let imagePrompts = [];
   let themes = [];
@@ -13,22 +15,31 @@ export async function submitImagesVideo(scenes: Scene[], tts: boolean, generate_
 
   let time = 0;
   let last_strength = null;
-  for (let scene of scenes) {
+  for (let scene of story.scenes) {
     imagePrompts.push({
       "prompt": scene.text.replaceAll("\n", ".")
     });
     themes.push("None");
-    if (tts) {
+
+    if (story.tts) {
       ttsTiming.push(-1);
     } else {
       ttsTiming.push(scene.duration);
     }
-    if (last_strength !== null) {
-      strengths.push(`${Math.floor(time * 10) - 1}:(${last_strength})`);
+
+    if (!story.peak_detection) {
+      if (last_strength !== null) {
+        strengths.push(`${Math.floor(time * 10) - 1}:(${last_strength})`);
+      }
+      strengths.push(`${Math.floor(time * 10)}:(${scene.strength})`);
+      last_strength = scene.strength;
     }
-    strengths.push(`${Math.floor(time * 10)}:(${scene.strength})`);
-    last_strength = scene.strength;
+
     time += scene.duration;
+  }
+
+  if (story.peak_detection) {
+    strengths = story.peaks;
   }
 
   let request_id = Math.floor(Math.random() * 100);
@@ -37,7 +48,7 @@ export async function submitImagesVideo(scenes: Scene[], tts: boolean, generate_
     discordName: `<@${discord.user_id}>`,
     discordUsername: `${discord.username} - [NEW FRONTEND]`,
     strength: strengths.join(","),
-    useTts: tts,
+    useTts: story.tts,
 
     imagePrompts: imagePrompts,
     themes: themes,
@@ -46,8 +57,8 @@ export async function submitImagesVideo(scenes: Scene[], tts: boolean, generate_
     id: request_id,
   };
 
-  if (!generate_images) {
-    body.images = scenes.map((scene) => scene.images.map((image) => image.url));
+  if (!story.generate_images) {
+    body.images = story.scenes.map((scene) => scene.images.map((image) => image.url));
   }
 
   let response = await fetch(url, {

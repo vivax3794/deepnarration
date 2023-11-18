@@ -27,14 +27,17 @@
               </template>
               Disable tts to manually adjust scene duration!
             </v-tooltip>
-            <v-slider thumb-label hint="How similar images are" :min="0.005" :max="0.995" v-model="scene.strength">
-              <template v-slot:prepend>
-                Random
-              </template>
-              <template v-slot:append>
-                Exact
-              </template>
-            </v-slider>
+            <v-expand-transition>
+              <v-slider v-if="!story.peak_detection" thumb-label hint="How similar images are" :min="0.005" :max="0.995"
+                v-model="scene.strength">
+                <template v-slot:prepend>
+                  Random
+                </template>
+                <template v-slot:append>
+                  Exact
+                </template>
+              </v-slider>
+            </v-expand-transition>
           </v-window-item>
           <v-window-item value="image">
             <div v-if="!story.generate_images">

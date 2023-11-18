@@ -3,12 +3,16 @@ import { useStorage } from "@vueuse/core";
 
 import { Scene } from "@/scene";
 import { computed } from "vue";
+import { ref } from "vue";
+import { Ref } from "vue";
 
 export const useStoryStore = defineStore("story", () => {
   const scenes = useStorage("Story-Scenes", [new Scene()]);
   scenes.value = scenes.value.map((scene) => Object.assign(new Scene(), scene));
   const tts = useStorage("Story-Tts", true);
   const generate_images = useStorage("Story-Images", true);
+  const peak_detection = useStorage("Story-Peak", false);
+  const peaks: Ref<string[]> = ref([]);
 
   const total_time = computed(() => scenes.value.reduce((acc, scene) => acc + scene.duration, 0))
 
@@ -16,6 +20,8 @@ export const useStoryStore = defineStore("story", () => {
     scenes.value = [new Scene()];
     tts.value = true;
     generate_images.value = true;
+    peak_detection.value = false;
+    peaks.value = [];
   }
 
   function new_scene() {
@@ -30,5 +36,5 @@ export const useStoryStore = defineStore("story", () => {
     }
   }
 
-  return { scenes, tts, generate_images, total_time, new_scene, delete_scene, reset }
+  return { scenes, tts, generate_images, peak_detection, peaks, total_time, new_scene, delete_scene, reset }
 })
