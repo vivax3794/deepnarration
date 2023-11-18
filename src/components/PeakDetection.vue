@@ -144,5 +144,6 @@ function calculatePeaks() {
   }
 
   story.peaks = peaks;
+  story.audio_file = audio_file.value;
 }
 </script>

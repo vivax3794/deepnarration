@@ -40,6 +40,7 @@ export async function submitImagesVideo(): Promise<number | null> {
 
   if (story.peak_detection) {
     strengths = story.peaks;
+    await upload_audio(story.audio_file!);
   }
 
   let request_id = Math.floor(Math.random() * 100);
@@ -61,6 +62,10 @@ export async function submitImagesVideo(): Promise<number | null> {
     body.images = story.scenes.map((scene) => scene.images.map((image) => image.url));
   }
 
+  if (story.peak_detection) {
+    body.audioName = story.audio_file!.name;
+  }
+
   let response = await fetch(url, {
     method: "Post",
     body: JSON.stringify(body)
@@ -76,6 +81,21 @@ export async function submitImagesVideo(): Promise<number | null> {
 interface JobStatus {
   position: number | null,
   total_time: number,
+}
+
+export async function upload_audio(file: File) {
+  let url = "https://deepnarrationapi.matissetec.dev/uploadAudio";
+
+  let data = new FormData();
+  data.append("audioFile", file, file.name);
+
+  await fetch(
+    url,
+    {
+      method: "POST",
+      body: data,
+    }
+  );
 }
 
 export async function getJobsStatus(id: number): Promise<JobStatus> {

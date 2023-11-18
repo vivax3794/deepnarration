@@ -13,6 +13,7 @@ export const useStoryStore = defineStore("story", () => {
   const generate_images = useStorage("Story-Images", true);
   const peak_detection = useStorage("Story-Peak", false);
   const peaks: Ref<string[]> = ref([]);
+  const audio_file: Ref<File | null> = ref(null);
 
   const total_time = computed(() => scenes.value.reduce((acc, scene) => acc + scene.duration, 0))
 
@@ -36,5 +37,5 @@ export const useStoryStore = defineStore("story", () => {
     }
   }
 
-  return { scenes, tts, generate_images, peak_detection, peaks, total_time, new_scene, delete_scene, reset }
+  return { scenes, tts, generate_images, peak_detection, audio_file, peaks, total_time, new_scene, delete_scene, reset }
 })
