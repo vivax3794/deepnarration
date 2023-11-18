@@ -1,4 +1,5 @@
 // Composables
+import { match } from 'assert'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -17,6 +18,10 @@ const routes = [
       {
         path: "/story",
         component: () => import("@/views/Story.vue"),
+      },
+      {
+        path: "/comfy",
+        component: () => import("@/views/Comfy.vue"),
       }
     ]
   },
