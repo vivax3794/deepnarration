@@ -5,7 +5,7 @@
       <v-tabs v-model="tab" bg-color="purple">
         <v-tab value="basic">Basic</v-tab>
         <v-expand-transition>
-          <v-tab value="image" v-if="!generate_images">
+          <v-tab value="image" v-if="!story.generate_images">
             Images
             <v-icon color="red" v-if="scene.images.length === 0">mdi-alert-minus</v-icon>
           </v-tab>
@@ -18,12 +18,12 @@
             <v-textarea v-model="scene.text" label="Scene description" append-inner-icon="mdi-shuffle" clearable auto-grow
               rows="1" counter="75" :counter-value="(v) => v.split(' ').length"
               :rules="[(v) => v.split(' ').length <= 75 || 'Max 75 words', (v) => v != '' || 'Cant be empty']"
-              @click:append-inner="scene.random()" @update:focused="(ev) => getTts(ev)"></v-textarea>
+              @click:append-inner="scene.random()" @update:focused="(ev) => updateDurationBasedOnTts(ev)"></v-textarea>
 
-            <v-tooltip location="right" :disabled="!tts">
+            <v-tooltip location="right" :disabled="!story.tts">
               <template v-slot:activator="{ props }">
                 <div v-bind="props">
-                  <v-slider :label="scene.duration.toFixed(2) + ' S'" prepend-icon="mdi-clock" :disabled="tts"
+                  <v-slider :label="scene.duration.toFixed(2) + ' S'" prepend-icon="mdi-clock" :disabled="story.tts"
                     v-model="scene.duration" :min="2" :max="60" :step="0.1"></v-slider>
                 </div>
               </template>
@@ -39,7 +39,7 @@
             </v-slider>
           </v-window-item>
           <v-window-item value="image">
-            <div v-if="!generate_images">
+            <div v-if="!story.generate_images">
               <v-btn color="green" width="100%" @click="addImage">
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
@@ -85,29 +85,30 @@
 <script setup lang="ts">
 import { watch } from "vue";
 import { Scene } from "@/scene";
-import { ref, Ref } from "vue";
+import { ref } from "vue";
+import { useStoryStore } from "@/store/story";
 
 const tab = ref("basic");
+const story = useStoryStore();
 
 let props = defineProps<{
   scene: Scene,
-  tts: boolean,
-  generate_images: boolean,
 }>()
 
 defineEmits<{
   (e: 'delete'): void
 }>();
 
-watch(() => props.tts, () => getTts(false));
-watch(() => props.generate_images, () => {
-  if (props.generate_images && tab.value === "image") {
+watch(() => story.tts, () => updateDurationBasedOnTts(false));
+watch(() => story.generate_images, () => {
+  // If we are on the image tab when images get turn off switch back to basic
+  if (story.generate_images && tab.value === "image") {
     tab.value = "basic";
   }
 })
 
-async function getTts(focused: boolean) {
-  if (!focused && props.tts) {
+async function updateDurationBasedOnTts(focused: boolean) {
+  if (!focused && story.tts) {
     let response = await fetch("https://deepnarrationapi.matissetec.dev/downloadTTSVoice", {
       method: "Post",
       body: JSON.stringify({
