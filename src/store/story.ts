@@ -10,6 +10,8 @@ export const useStoryStore = defineStore("story", () => {
   const tts = useStorage("Story-Tts", true);
   const generate_images = useStorage("Story-Images", true);
 
+  const total_time = computed(() => scenes.value.reduce((acc, scene) => acc + scene.duration, 0))
+
   function reset() {
     scenes.value = [new Scene()];
     tts.value = true;
@@ -28,7 +30,5 @@ export const useStoryStore = defineStore("story", () => {
     }
   }
 
-  const total_time = computed(() => scenes.value.reduce((acc, scene) => acc + scene.duration, 0))
-
-  return { scenes, tts, generate_images, new_scene, delete_scene, total_time, reset }
+  return { scenes, tts, generate_images, total_time, new_scene, delete_scene, reset }
 })
