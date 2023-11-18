@@ -105,7 +105,7 @@ export async function getJobsStatus(id: number): Promise<JobStatus> {
 
   let [jobs_raw, time_raw] = data.split("<br />");
   let jobs = JSON.parse(jobs_raw);
-  let time = /current job is about (\d+) seconds/.exec(time_raw)[1];
+  let time = /current job is about (\d+) seconds/.exec(time_raw)![1];
 
   let position = null;
   let index = 0;

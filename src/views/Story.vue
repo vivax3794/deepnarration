@@ -140,7 +140,7 @@ let last_position: number | null = -1;
 const form: Ref<VForm | null> = ref(null);
 
 async function submit() {
-  let { valid } = await form.value?.validate();
+  let { valid } = await form.value!.validate();
   if (valid !== true) {
     error_text.value = "Invalid form inputs";
     error.value = true;
