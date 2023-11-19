@@ -113,6 +113,7 @@ function max(arg: Float32Array): number {
 
 watch(strengthRange, () => calculatePeaks())
 watch(audioRange, () => calculatePeaks())
+watch(() => story.total_time, () => calculatePeaks())
 
 function calculatePeaks() {
   const r_audio_buffer = audio_buffer.value!;
