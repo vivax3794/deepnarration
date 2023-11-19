@@ -24,7 +24,7 @@
                 <Line id="graph" :data="{
                   labels: [...Array(show_peaks.length).keys()],
                   datasets: [{ label: 'Strength values', data: show_peaks, yAxisID: 'yAxis' }]
-                }" :options="{ scales: { yAxis: { min: 0, max: 1, } } }">
+                }" :options="{ scales: { yAxis: { min: 0, max: 1, } }, animation: false }">
                 </Line>
               </v-col>
             </v-row>
@@ -118,11 +118,15 @@ watch(() => story.total_time, () => calculatePeaks())
 function calculatePeaks() {
   const r_audio_buffer = audio_buffer.value!;
 
-
   let audio_data = r_audio_buffer.getChannelData(0);
 
   const range_start = Math.floor(audioRange.value[0] / 100 * audio_data.length);
   const range_end = Math.floor(audioRange.value[1] / 100 * audio_data.length);
+
+  if (range_start == range_end) {
+    return;
+  }
+
   audio_data = audio_data.slice(range_start, range_end).map(Math.abs);
 
   const audio_spf = Math.floor(audio_data.length / (story.total_time / SPF));
