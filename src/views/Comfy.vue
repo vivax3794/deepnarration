@@ -29,15 +29,15 @@
 </style>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { useStorage } from '@vueuse/core';
 
 import { useDiscordStore } from '@/store/discord';
 
 const discord = useDiscordStore();
 
-const target_url = ref("");
-const person_url = ref("");
-const prompt = ref("");
+const target_url = useStorage("Comfy-Target", "");
+const person_url = useStorage("Comfy-Person", "");
+const prompt = useStorage("Comfy-Prompt", "");
 
 function submit() {
   const url = "https://deepnarrationapi.matissetec.dev/startComfyPrompt"
