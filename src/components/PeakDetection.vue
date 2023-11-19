@@ -22,7 +22,7 @@
               </v-col>
               <v-col :cols="11">
                 <Line id="graph" :data="{
-                  labels: [...Array(show_peaks.length).keys()],
+                  labels: [...Array(show_peaks.length).keys()].map((v) => v / 10),
                   datasets: [{ label: 'Strength values', data: show_peaks, yAxisID: 'yAxis' }]
                 }" :options="{ scales: { yAxis: { min: 0, max: 1, } }, animation: false }">
                 </Line>
