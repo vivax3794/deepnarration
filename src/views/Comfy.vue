@@ -1,28 +1,20 @@
 <template>
-  <div id="page">
-    <ResultQueue :request_id="req_id" v-model="show_result"></ResultQueue>
-    <v-card style="margin-top: 20px">
-      <v-card-text>
-        <v-text-field v-model="person_url" label="Image of a persons face" prepend-inner-icon="mdi-web">
-        </v-text-field>
-        <v-icon id="arrow" size="x-large">mdi-arrow-down</v-icon>
-        <v-text-field v-model="target_url" label="Target image" prepend-inner-icon="mdi-web">
-        </v-text-field>
-        <v-text-field v-model="prompt" label="Guiding prompt">
-        </v-text-field>
-        <TimeoutButton color="blue" width="100%" @clicked="submit()">Submit</TimeoutButton>
-      </v-card-text>
-    </v-card>
-  </div>
+  <ResultQueue :request_id="req_id" v-model="show_result"></ResultQueue>
+  <v-card style="margin-top: 20px">
+    <v-card-text>
+      <v-text-field v-model="person_url" label="Image of a persons face" prepend-inner-icon="mdi-web">
+      </v-text-field>
+      <v-icon id="arrow" size="x-large">mdi-arrow-down</v-icon>
+      <v-text-field v-model="target_url" label="Target image" prepend-inner-icon="mdi-web">
+      </v-text-field>
+      <v-text-field v-model="prompt" label="Guiding prompt">
+      </v-text-field>
+      <TimeoutButton color="blue" width="100%" @clicked="submit()">Submit</TimeoutButton>
+    </v-card-text>
+  </v-card>
 </template>
 
 <style scoped>
-#page {
-  margin-top: 20px;
-  margin-left: 20%;
-  margin-right: 20%;
-}
-
 #arrow {
   margin-left: 50%;
   transform: translateX(-50%);

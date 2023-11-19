@@ -18,12 +18,20 @@
       </v-list>
     </v-navigation-drawer>
     <v-main>
-      <router-view />
+      <div id="page">
+        <router-view />
+      </div>
     </v-main>
   </v-app>
 </template>
 
 <style scoped>
+#page {
+  margin-top: 20px;
+  margin-left: 20%;
+  margin-right: 20%;
+}
+
 #avatar {
   height: 60%;
 }

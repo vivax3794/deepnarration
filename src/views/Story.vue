@@ -1,68 +1,66 @@
 <template>
-  <div id="page">
-    <ResultQueue :request_id="req_id" v-model="show_result"></ResultQueue>
-    <div id="scenes" class="margin">
-      <v-form @submit.prevent="submit" ref="form">
-        <v-container>
-          <v-row>
-            <v-col>
-              <v-dialog :width="500">
-                <template v-slot:activator="{ props }">
-                  <v-btn v-bind="props" width="100%" color="red"><v-icon>mdi-restart</v-icon></v-btn>
-                </template>
-                <template v-slot:default="{ isActive }">
-                  <v-card title="Delete all scenes?">
-                    <v-card-actions>
-                      <v-btn color="red" @click="isActive.value = false; story.reset()">Yes</v-btn>
-                      <v-btn @click="isActive.value = false">No</v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </template>
-              </v-dialog>
-            </v-col>
-            <v-col>
-              <TimeoutButton color="blue" width="100%" type="submit">
-                Submit -
-                {{ story.total_time }}S
-              </TimeoutButton>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-btn width="100%" :color="story.tts ? 'green' : 'red'" @click="story.tts = !story.tts">
-                <v-icon>{{ story.tts ? "mdi-microphone" : "mdi-microphone-off" }}</v-icon>
-                {{ story.tts ? "TTS" : "No Audio" }}
-              </v-btn>
-            </v-col>
-            <v-col>
-              <v-btn width="100%" :color="story.generate_images ? 'green' : 'red'"
-                @click="story.generate_images = !story.generate_images">
-                <v-icon>{{ story.generate_images ? "mdi-image-auto-adjust" : "mdi-web" }}</v-icon>
-                {{ story.generate_images ? "100% AI Images" : "Inserted keyframe images" }}
-              </v-btn>
-            </v-col>
-            <v-col>
-              <v-btn width="100%" :color="story.peak_detection ? 'green' : 'red'"
-                @click="story.peak_detection = !story.peak_detection">
-                <v-icon>{{ story.peak_detection ? "mdi-music" : "mdi-pen" }}</v-icon>
-                {{ story.peak_detection ? "Peak Detection" : "Manual Strength Values" }}
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
-        <v-expand-transition>
-          <PeakDetection v-if="story.peak_detection"></PeakDetection>
-        </v-expand-transition>
-        <transition-group name="list">
-          <div v-for="(scene, index) in story.scenes" :key="scene.id" class="margin">
-            <SceneView :scene="scene" @delete="story.delete_scene(index)">
-            </SceneView>
-          </div>
-        </transition-group>
-        <v-btn class="margin" style="margin-bottom: 100px;" color="green" width="100%"
-          @click="story.new_scene()"><v-icon>mdi-plus</v-icon></v-btn>
-      </v-form>
-    </div>
+  <ResultQueue :request_id="req_id" v-model="show_result"></ResultQueue>
+  <div id="scenes" class="margin">
+    <v-form @submit.prevent="submit" ref="form">
+      <v-container>
+        <v-row>
+          <v-col>
+            <v-dialog :width="500">
+              <template v-slot:activator="{ props }">
+                <v-btn v-bind="props" width="100%" color="red"><v-icon>mdi-restart</v-icon></v-btn>
+              </template>
+              <template v-slot:default="{ isActive }">
+                <v-card title="Delete all scenes?">
+                  <v-card-actions>
+                    <v-btn color="red" @click="isActive.value = false; story.reset()">Yes</v-btn>
+                    <v-btn @click="isActive.value = false">No</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </template>
+            </v-dialog>
+          </v-col>
+          <v-col>
+            <TimeoutButton color="blue" width="100%" type="submit">
+              Submit -
+              {{ story.total_time }}S
+            </TimeoutButton>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-btn width="100%" :color="story.tts ? 'green' : 'red'" @click="story.tts = !story.tts">
+              <v-icon>{{ story.tts ? "mdi-microphone" : "mdi-microphone-off" }}</v-icon>
+              {{ story.tts ? "TTS" : "No Audio" }}
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn width="100%" :color="story.generate_images ? 'green' : 'red'"
+              @click="story.generate_images = !story.generate_images">
+              <v-icon>{{ story.generate_images ? "mdi-image-auto-adjust" : "mdi-web" }}</v-icon>
+              {{ story.generate_images ? "100% AI Images" : "Inserted keyframe images" }}
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn width="100%" :color="story.peak_detection ? 'green' : 'red'"
+              @click="story.peak_detection = !story.peak_detection">
+              <v-icon>{{ story.peak_detection ? "mdi-music" : "mdi-pen" }}</v-icon>
+              {{ story.peak_detection ? "Peak Detection" : "Manual Strength Values" }}
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+      <v-expand-transition>
+        <PeakDetection v-if="story.peak_detection"></PeakDetection>
+      </v-expand-transition>
+      <transition-group name="list">
+        <div v-for="(scene, index) in story.scenes" :key="scene.id" class="margin">
+          <SceneView :scene="scene" @delete="story.delete_scene(index)">
+          </SceneView>
+        </div>
+      </transition-group>
+      <v-btn class="margin" style="margin-bottom: 100px;" color="green" width="100%"
+        @click="story.new_scene()"><v-icon>mdi-plus</v-icon></v-btn>
+    </v-form>
   </div>
 
   <v-dialog width="auto" v-model="error">
@@ -71,12 +69,6 @@
 </template>
 
 <style scoped>
-#page {
-  margin-top: 20px;
-  margin-left: 20%;
-  margin-right: 20%;
-}
-
 .margin {
   margin-top: 20px;
 }
