@@ -102,7 +102,7 @@ async function decode_audio_buffer(audio_file: File) {
 }
 
 const SPF = 0.1;
-const audio_scale = computed(() => story.total_time / ((audio_buffer.value?.duration || story.total_time) * (audioRange.value[1] - audioRange.value[0]) / 100))
+const audio_scale = computed(() => story.total_time / ((audio_buffer.value?.duration || story.total_time) * (audioRange.value[1] - audioRange.value[0]) / 100 || 1))
 
 function min(arg: Float32Array): number {
   return arg.reduce((acc, elem) => Math.min(acc, elem), Infinity);
@@ -123,7 +123,7 @@ function calculatePeaks() {
   const range_start = Math.floor(audioRange.value[0] / 100 * audio_data.length);
   const range_end = Math.floor(audioRange.value[1] / 100 * audio_data.length);
 
-  if (range_start == range_end) {
+  if (range_start === range_end) {
     return;
   }
 
