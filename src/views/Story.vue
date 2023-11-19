@@ -34,10 +34,10 @@
               </v-dialog>
             </v-col>
             <v-col>
-              <v-btn color="blue" width="100%" type="submit" :disabled="!can_submit">
+              <TimeoutButton color="blue" width="100%" type="submit">
                 Submit -
                 {{ story.total_time }}S
-              </v-btn>
+              </TimeoutButton>
             </v-col>
           </v-row>
           <v-row>
@@ -118,10 +118,9 @@ import { VForm } from "vuetify/lib/components/index.mjs";
 
 import * as api from "@/api";
 import { useStoryStore } from "@/store/story";
+import TimeoutButton from "@/components/TimeoutButton.vue";
 
 const story = useStoryStore();
-
-const can_submit = ref(true);
 
 const show_result = ref(false);
 const error = ref(false);
@@ -146,9 +145,6 @@ async function submit() {
     error.value = true;
     return;
   }
-
-  can_submit.value = false;
-  setTimeout(() => can_submit.value = true, 2000);
 
   let result = await api.submitImagesVideo();
   if (result === null) {

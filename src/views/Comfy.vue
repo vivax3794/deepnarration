@@ -9,7 +9,7 @@
         </v-text-field>
         <v-text-field v-model="prompt" label="Guiding prompt">
         </v-text-field>
-        <v-btn color="blue" width="100%" @click="submit()">Submit</v-btn>
+        <TimeoutButton color="blue" width="100%" @clicked="submit()">Submit</TimeoutButton>
       </v-card-text>
     </v-card>
   </div>
@@ -32,6 +32,7 @@
 import { useStorage } from '@vueuse/core';
 
 import { useDiscordStore } from '@/store/discord';
+import TimeoutButton from "@/components/TimeoutButton.vue";
 
 const discord = useDiscordStore();
 
