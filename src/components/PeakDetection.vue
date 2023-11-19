@@ -23,7 +23,9 @@
               <v-col :cols="11">
                 <Line id="graph" :data="{
                   labels: [...Array(show_peaks.length).keys()].map((v) => v / 10),
-                  datasets: [{ label: 'Strength values', data: show_peaks, yAxisID: 'yAxis' }]
+                  datasets: [
+                    { label: 'Strength values', data: show_peaks, yAxisID: 'yAxis' },
+                  ]
                 }" :options="{ scales: { yAxis: { min: 0, max: 1, } }, animation: false }">
                 </Line>
               </v-col>
@@ -36,7 +38,7 @@
             </v-row>
           </v-container>
           <v-alert v-if="Math.abs(1 - audio_scale) >= 0.1" color="red" title="Length mismatch"
-            :text="`Your video will be ${story.total_time} seconds, your audio is ${audio_buffer?.duration.toFixed(2)} seconds, and will be scaled to fit.`"></v-alert>
+            :text="`Your video will be ${story.total_time} seconds, your audio is ${audio_length?.toFixed(2)} seconds, and will be scaled to fit.`"></v-alert>
         </div>
       </v-expand-transition>
     </v-card-text>
@@ -64,6 +66,7 @@ import { ref } from 'vue';
 
 import { Line } from "vue-chartjs";
 import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, LineController, Colors } from 'chart.js'
+import { ComputedRef } from 'vue';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, LineController, Colors)
 
@@ -98,6 +101,14 @@ async function decode_audio_buffer(audio_file: File) {
 
   calculatePeaks();
 }
+
+const audio_length: ComputedRef<number | null> = computed(() => {
+  if (audio_buffer.value !== null) {
+    return audio_buffer.value.duration * (audioRange.value[1] - audioRange.value[0]) / 100;
+  } else {
+    return null;
+  }
+});
 
 const SPF = 0.1;
 const audio_scale = computed(() => story.total_time / ((audio_buffer.value?.duration || story.total_time) * (audioRange.value[1] - audioRange.value[0]) / 100 || 1))
