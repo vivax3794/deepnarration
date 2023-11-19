@@ -130,7 +130,9 @@ watch(should_flip, () => calculatePeaks())
 watch(() => story.total_time, () => calculatePeaks())
 
 function calculatePeaks() {
-  const r_audio_buffer = audio_buffer.value!;
+  if (audio_buffer.value === null) return;
+
+  const r_audio_buffer = audio_buffer.value;
 
   let audio_data = r_audio_buffer.getChannelData(0);
 
