@@ -46,7 +46,7 @@ export async function submitImagesVideo(): Promise<number | null> {
   let body: any = {
     audioName: "",
     discordName: `<@${discord.user_id}>`,
-    discordUsername: `${discord.username} - [NEW FRONTEND]`,
+    discordUsername: discord.username,
     strength: strengths.join(","),
     useTts: story.tts,
 
@@ -113,7 +113,7 @@ export async function getJobsStatus(id: number): Promise<JobStatus> {
 
   let position = null;
   let index = 0;
-  let estimated_time_until_your_turn = 0;
+  let estimated_time_until_your_turn = Number.parseInt(time);
   for (let job of jobs) {
     if (job.request_data.id == id) {
       position = index;
