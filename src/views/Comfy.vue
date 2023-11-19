@@ -43,6 +43,7 @@ function submit() {
   const url = "https://deepnarrationapi.matissetec.dev/startComfyPrompt"
 
   const body = {
+    discordId: discord.user_id,
     discordUsername: discord.username,
     personPicture: person_url.value,
     targetPicture: target_url.value,
