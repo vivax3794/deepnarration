@@ -80,6 +80,7 @@ export async function submitImagesVideo(): Promise<number | null> {
 interface JobStatus {
   position: number | null,
   total_time: number,
+  estimated_time_until_your_turn: number,
 }
 
 export async function upload_audio(file: File): Promise<string> {
@@ -112,15 +113,19 @@ export async function getJobsStatus(id: number): Promise<JobStatus> {
 
   let position = null;
   let index = 0;
+  let estimated_time_until_your_turn = 0;
   for (let job of jobs) {
     if (job.request_data.id == id) {
       position = index;
+      break;
     }
+    estimated_time_until_your_turn += job.cost;
     index++;
   }
 
   return {
-    position: position,
-    total_time: Number.parseInt(time)
+    position,
+    total_time: Number.parseInt(time),
+    estimated_time_until_your_turn
   }
 }

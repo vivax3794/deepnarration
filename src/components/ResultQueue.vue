@@ -3,7 +3,7 @@
     <v-card class="margin" v-if="modelValue" :color="result_color()">
       <v-card-title>
         <v-btn icon="mdi-close" variant="plain" @click="close_results"></v-btn>
-        Result - {{ our_job ? 'Yours' : `Queue: ${our_position}` }}
+        Result - {{ our_job ? 'Yours' : `Queue: ${our_position} - ${estimated_until_us}S until your turn.` }}
       </v-card-title>
       Results will be on discord, for now.
       <v-progress-linear :model-value="time_remaing / max_time * 100" height="20" color="orange"
@@ -32,6 +32,7 @@ const our_job = ref(false);
 const time_remaing = ref(-1);
 const max_time = ref(-1);
 const our_position = ref(-1);
+const estimated_until_us = ref(-1);
 
 let last_position: number | null = -1;
 let update_id: ReturnType<typeof setInterval> | undefined = undefined;
@@ -70,12 +71,14 @@ async function update_job_status() {
   if (status.position !== last_position) {
     last_position = status.position;
     time_remaing.value = 0;
+    estimated_until_us.value = status.estimated_time_until_your_turn;
   }
   max_time.value = status.total_time;
 
   if (time_remaing.value > max_time.value && our_job.value) {
     clearInterval(update_id);
   }
+
 }
 
 function result_color(): string {
