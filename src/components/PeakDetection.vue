@@ -20,7 +20,7 @@
                   </template>
                 </v-range-slider>
               </v-col>
-              <v-col :cols="11">
+              <v-col :cols="10">
                 <Line id="graph" :data="{
                   labels: [...Array(show_peaks.length).keys()].map((v) => v / 10),
                   datasets: [
@@ -28,6 +28,9 @@
                   ]
                 }" :options="{ scales: { yAxis: { min: 0, max: 1, } }, animation: false }">
                 </Line>
+              </v-col>
+              <v-col :cols="1">
+                <v-btn color="green" icon="mdi-repeat-variant" @click="should_flip = !should_flip"></v-btn>
               </v-col>
             </v-row>
             <v-row>
@@ -88,6 +91,7 @@ watch(() => audio_file.value, () => {
 })
 
 const strengthRange = ref([0.45, 0.85]);
+const should_flip = ref(true);
 
 const minStrength = computed(() => strengthRange.value[0]);
 const maxStrength = computed(() => strengthRange.value[1]);
@@ -122,6 +126,7 @@ function max(arg: Float32Array): number {
 
 watch(strengthRange, () => calculatePeaks())
 watch(audioRange, () => calculatePeaks())
+watch(should_flip, () => calculatePeaks())
 watch(() => story.total_time, () => calculatePeaks())
 
 function calculatePeaks() {
@@ -149,7 +154,7 @@ function calculatePeaks() {
   for (let frame_start = 0; frame_start <= audio_data.length; frame_start += audio_spf) {
     const peak_value = max(audio_data.slice(frame_start, frame_start + audio_spf));
     const normalized_value = (peak_value - smallestVolume) / (highestVolume - smallestVolume);
-    const flipped_value = 1 - normalized_value;
+    const flipped_value = should_flip.value ? 1 - normalized_value : normalized_value;
     const strength_value = flipped_value * (maxStrength.value - minStrength.value) + minStrength.value;
 
     peaks.push(`${frame}:(${strength_value})`)
