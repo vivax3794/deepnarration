@@ -66,6 +66,7 @@ import { watch } from 'vue';
 import { computed } from 'vue';
 import { Ref } from 'vue';
 import { ref } from 'vue';
+import audioBufferToBlob from "audiobuffer-to-blob";
 
 import { Line } from "vue-chartjs";
 import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, LineController, Colors } from 'chart.js'
@@ -143,7 +144,8 @@ function calculatePeaks() {
     return;
   }
 
-  audio_data = audio_data.slice(range_start, range_end).map(Math.abs);
+  const cropped_audio_data = audio_data.slice(range_start, range_end);
+  audio_data = cropped_audio_data.map(Math.abs);
 
   const audio_spf = Math.floor(audio_data.length / (story.total_time / SPF));
 
@@ -165,6 +167,22 @@ function calculatePeaks() {
   }
 
   story.peaks = peaks;
-  story.audio_file = audio_file.value;
+  create_audio_file(cropped_audio_data);
+}
+
+function create_audio_file(croped_audio: Float32Array) {
+  const orig_buffer = audio_buffer.value!;
+  const new_buffer = new AudioBuffer({
+    length: orig_buffer.length,
+    numberOfChannels: 1,
+    sampleRate: orig_buffer.sampleRate,
+  });
+
+  new_buffer.copyToChannel(croped_audio, 0);
+
+  const blob: Blob = audioBufferToBlob(new_buffer);
+  const new_file = new File([blob], audio_file.value!.name);
+
+  story.audio_file = new_file;
 }
 </script>

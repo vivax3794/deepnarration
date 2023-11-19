@@ -12,6 +12,7 @@
         "@mdi/font": "7.0.96",
         "@vueuse/core": "^10.5.0",
         "@vueuse/integrations": "^10.5.0",
+        "audiobuffer-to-blob": "^1.0.2",
         "chart.js": "^4.4.0",
         "pinia": "^2.0.23",
         "roboto-fontface": "*",
