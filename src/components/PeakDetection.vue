@@ -172,11 +172,10 @@ function calculatePeaks() {
 
 function create_audio_file(croped_audio: Float32Array) {
   const orig_buffer = audio_buffer.value!;
-  const new_buffer = new AudioBuffer({
-    length: orig_buffer.length,
-    numberOfChannels: 1,
-    sampleRate: orig_buffer.sampleRate,
-  });
+
+  const audio_context = new AudioContext();
+  const new_length = Math.floor(orig_buffer.length * (audioRange.value[1] - audioRange.value[0]) / 100);
+  const new_buffer = audio_context.createBuffer(1, new_length, orig_buffer.sampleRate);
 
   new_buffer.copyToChannel(croped_audio, 0);
 
