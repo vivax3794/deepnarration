@@ -18,6 +18,7 @@
 import { ref, watch } from 'vue';
 
 import * as api from "@/api";
+import { onUnmounted } from 'vue';
 
 const props = defineProps<{
   request_id: number,
@@ -36,6 +37,10 @@ const estimated_until_us = ref(-1);
 
 let last_position: number | null = -1;
 let update_id: ReturnType<typeof setInterval> | undefined = undefined;
+
+onUnmounted(() => {
+  clearInterval(update_id);
+})
 
 function reset() {
   our_job.value = false;
