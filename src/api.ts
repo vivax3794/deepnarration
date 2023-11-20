@@ -1,4 +1,3 @@
-import { Scene } from "@/scene";
 import { useDiscordStore } from "./store/discord";
 import { useStoryStore } from "./store/story";
 

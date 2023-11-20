@@ -1,5 +1,4 @@
 // Composables
-import { match } from 'assert'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
