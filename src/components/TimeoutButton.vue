@@ -1,5 +1,5 @@
 <template>
-  <v-btn v-bind="$props" :disabled="timeout" @click="click()">
+  <v-btn :disabled="timeout" @click="click()">
     <slot></slot>
   </v-btn>
 </template>
