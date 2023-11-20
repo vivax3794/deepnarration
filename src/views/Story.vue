@@ -1,7 +1,7 @@
 <template>
   <ResultQueue :request_id="req_id" v-model="show_result"></ResultQueue>
   <div id="scenes" class="margin">
-    <v-form @submit.prevent="submit" ref="form">
+    <v-form ref="form">
       <v-container>
         <v-row>
           <v-col>
@@ -20,7 +20,7 @@
             </v-dialog>
           </v-col>
           <v-col>
-            <TimeoutButton color="blue" width="100%" type="submit">
+            <TimeoutButton color="blue" width="100%" @clicked="submit()">
               Submit -
               {{ story.total_time }}S
             </TimeoutButton>
