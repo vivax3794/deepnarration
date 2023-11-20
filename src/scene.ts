@@ -61,7 +61,7 @@ export class Scene {
   strength: number;
 
   constructor() {
-    let discord = useDiscordStore();
+    const discord = useDiscordStore();
 
     this.text = "";
     this.id = Math.floor(Math.random() * 100);
@@ -76,10 +76,10 @@ export class Scene {
   }
 
   random() {
-    let sentence = sample(Sentences);
+    const sentence = sample(Sentences);
     let text = "";
 
-    for (let part of sentence) {
+    for (const part of sentence) {
       if (typeof part === "string") {
         text += part;
       } else {

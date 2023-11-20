@@ -5,17 +5,17 @@ import { useStoryStore } from "./store/story";
 export async function submitImagesVideo(): Promise<number | null> {
   const url = "https://deepnarrationapi.matissetec.dev/getImagesVideo";
 
-  let discord = useDiscordStore();
-  let story = useStoryStore();
+  const discord = useDiscordStore();
+  const story = useStoryStore();
 
-  let imagePrompts = [];
-  let themes = [];
-  let ttsTiming = [];
+  const imagePrompts = [];
+  const themes = [];
+  const ttsTiming = [];
   let strengths = [];
 
   let time = 0;
   let last_strength = null;
-  for (let scene of story.scenes) {
+  for (const scene of story.scenes) {
     imagePrompts.push({
       "prompt": scene.text.replaceAll("\n", ".")
     });
@@ -42,8 +42,8 @@ export async function submitImagesVideo(): Promise<number | null> {
     strengths = story.peaks;
   }
 
-  let request_id = Math.floor(Math.random() * 100);
-  let body: any = {
+  const request_id = Math.floor(Math.random() * 100);
+  const body: any = {
     audioName: "",
     discordName: `<@${discord.user_id}>`,
     discordUsername: discord.username,
@@ -65,7 +65,7 @@ export async function submitImagesVideo(): Promise<number | null> {
     body.audioName = await upload_audio(story.audio_file!);
   }
 
-  let response = await fetch(url, {
+  const response = await fetch(url, {
     method: "Post",
     body: JSON.stringify(body)
   });
@@ -84,12 +84,12 @@ interface JobStatus {
 }
 
 export async function upload_audio(file: File): Promise<string> {
-  let url = "https://deepnarrationapi.matissetec.dev/uploadAudio";
+  const url = "https://deepnarrationapi.matissetec.dev/uploadAudio";
 
-  let id = Math.floor(Math.random() * 1000000);
-  let name = `${id}.mp3`
+  const id = Math.floor(Math.random() * 1000000);
+  const name = `${id}.mp3`
 
-  let data = new FormData();
+  const data = new FormData();
   data.append("audioFile", file, name);
 
   await fetch(
@@ -103,18 +103,18 @@ export async function upload_audio(file: File): Promise<string> {
 }
 
 export async function getJobsStatus(id: number): Promise<JobStatus> {
-  let url = "https://deepnarrationapi.matissetec.dev/queue";
-  let response = await fetch(url);
-  let data = await response.text();
+  const url = "https://deepnarrationapi.matissetec.dev/queue";
+  const response = await fetch(url);
+  const data = await response.text();
 
-  let [jobs_raw, time_raw] = data.split("<br />");
-  let jobs = JSON.parse(jobs_raw);
-  let time = /current job is about (\d+) seconds/.exec(time_raw)![1];
+  const [jobs_raw, time_raw] = data.split("<br />");
+  const jobs = JSON.parse(jobs_raw);
+  const time = /current job is about (\d+) seconds/.exec(time_raw)![1];
 
   let position = null;
   let index = 0;
   let estimated_time_until_your_turn = Number.parseInt(time);
-  for (let job of jobs) {
+  for (const job of jobs) {
     if (job.request_data.id == id) {
       position = index;
       break;
