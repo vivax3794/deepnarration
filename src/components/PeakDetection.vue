@@ -41,7 +41,7 @@
             </v-row>
           </v-container>
           <v-alert v-if="Math.abs(1 - audio_scale) >= 0.1" color="red" title="Length mismatch"
-            :text="`Your video will be ${story.total_time} seconds, your audio is ${audio_length?.toFixed(2)} seconds, and will be scaled to fit.`"></v-alert>
+            :text="`Your video will be ${story.total_time.toFixed(2)} seconds, your audio is ${audio_length?.toFixed(2)} seconds, and will be scaled to fit.`"></v-alert>
         </div>
       </v-expand-transition>
     </v-card-text>
