@@ -49,17 +49,17 @@
           </v-col>
         </v-row>
       </v-container>
-      <v-expand-transition>
-        <PeakDetection v-if="story.peak_detection"></PeakDetection>
-      </v-expand-transition>
       <transition-group name="list">
         <div v-for="(scene, index) in story.scenes" :key="scene.id" class="margin">
-          <SceneView :scene="scene" @delete="story.delete_scene(index)">
+          <SceneView v-model="story.scenes[index]" @delete="story.delete_scene(index)">
           </SceneView>
         </div>
       </transition-group>
-      <v-btn class="margin" style="margin-bottom: 100px;" color="green" width="100%"
-        @click="story.new_scene()"><v-icon>mdi-plus</v-icon></v-btn>
+      <v-btn class="margin" color="green" width="100%" @click="story.new_scene()"
+        style="margin-bottom: 20px;"><v-icon>mdi-plus</v-icon></v-btn>
+      <v-expand-transition>
+        <PeakDetection v-if="story.peak_detection" style="margin-bottom: 100px;"></PeakDetection>
+      </v-expand-transition>
     </v-form>
   </div>
 

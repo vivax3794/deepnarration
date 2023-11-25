@@ -88,6 +88,7 @@ import { watch } from "vue";
 import { Scene } from "@/scene";
 import { ref } from "vue";
 import { useStoryStore } from "@/store/story";
+import { computed } from "vue";
 
 const description_rules = [
   (v: string) => v.split(' ').length <= 75 || 'Max 75 words',
@@ -101,12 +102,18 @@ const tab = ref("basic");
 const story = useStoryStore();
 
 let props = defineProps<{
-  scene: Scene,
+  modelValue: Scene,
 }>()
 
-defineEmits<{
-  (e: 'delete'): void
+const emit = defineEmits<{
+  (e: 'delete'): void,
+  (e: "update:modelValue", value: Scene): void
 }>();
+
+const scene = computed({
+  get: () => props.modelValue,
+  set: (value) => emit("update:modelValue", value)
+});
 
 watch(() => story.tts, () => updateDurationBasedOnTts(false));
 watch(() => story.generate_images, () => {
@@ -121,16 +128,16 @@ async function updateDurationBasedOnTts(focused: boolean) {
     let response = await fetch("https://deepnarrationapi.matissetec.dev/downloadTTSVoice", {
       method: "Post",
       body: JSON.stringify({
-        promptDataString: props.scene.text
+        promptDataString: scene.value.text
       })
     });
-    props.scene.duration = Number.parseFloat(await response.text())
+    scene.value.duration = Number.parseFloat(await response.text())
   }
 }
 
 function addImage() {
-  if (props.scene.images.length < 5) {
-    props.scene.images.push({
+  if (scene.value.images.length < 5) {
+    scene.value.images.push({
       url: "",
       id: Math.floor(Math.random() * 100)
     })
@@ -138,8 +145,8 @@ function addImage() {
 }
 
 function delete_image(index: number) {
-  props.scene.images.splice(index, 1);
-  if (props.scene.images.length == 0) {
+  scene.value.images.splice(index, 1);
+  if (scene.value.images.length == 0) {
     addImage();
   }
 }
