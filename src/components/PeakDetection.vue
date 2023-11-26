@@ -7,7 +7,9 @@
           <v-container>
             <v-row>
               <v-col :cols="1">
-                <v-range-slider :max="1" :min="0" v-model="strengthRange" direction="vertical">
+                <v-range-slider :max="1" :min="0" v-model="strengthRange" direction="vertical"
+                  @update:focused="(focused) => { if (!focused) calculatePeaks() }"
+                  @update:model-value="() => { if ((audio_buffer?.duration || 0) < 30) calculatePeaks() }">
                   <template v-slot:prepend>
                     <span class="center-text">
                       Random
@@ -35,7 +37,9 @@
             </v-row>
             <v-row>
               <v-col :cols="12">
-                <v-range-slider :max="100" :min="0" v-model="audioRange">
+                <v-range-slider :max="100" :min="0" v-model="audioRange"
+                  @update:focused="(focused) => { if (!focused) calculatePeaks() }"
+                  @update:model-value="() => { if ((audio_buffer?.duration || 0) < 30) calculatePeaks() }">
                 </v-range-slider>
               </v-col>
             </v-row>
@@ -125,8 +129,46 @@ function max(arg: Float32Array): number {
   return arg.reduce((acc, elem) => Math.max(acc, elem), 0);
 }
 
-watch(strengthRange, () => calculatePeaks())
-watch(audioRange, () => calculatePeaks())
+function update_audio_start() {
+  let target_size = story.total_time / ((audio_buffer.value?.duration || story.total_time)) * 100;
+
+  if (target_size > 100) {
+    audioRange.value = [0, 100];
+    return;
+  }
+
+  audioRange.value[1] = audioRange.value[0] + target_size;
+
+  if (audioRange.value[1] > 100) {
+    audioRange.value[0] = 100 - target_size;
+    audioRange.value[1] = 100;
+  }
+}
+
+function update_aduio_end() {
+  let target_size = story.total_time / ((audio_buffer.value?.duration || story.total_time)) * 100;
+  audioRange.value[0] = audioRange.value[1] - target_size;
+
+  if (target_size > 100) {
+    audioRange.value = [0, 100];
+    return;
+  }
+
+  if (audioRange.value[0] < 0) {
+    audioRange.value[1] = target_size;
+    audioRange.value[0] = 0;
+  }
+}
+
+watch(audioRange, (new_value, old_value) => {
+  if (new_value[0] != old_value[0]) update_audio_start()
+  else update_aduio_end()
+})
+watch(() => story.total_time, update_audio_start)
+watch(audio_buffer, update_audio_start)
+
+// watch(strengthRange, () => calculatePeaks())
+// watch(audioRange, () => calculatePeaks())
 watch(should_flip, () => calculatePeaks())
 watch(() => story.total_time, () => calculatePeaks())
 
