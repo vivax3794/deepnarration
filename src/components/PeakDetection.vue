@@ -1,7 +1,7 @@
 <template>
   <v-card title="Peak Detection">
     <v-card-text>
-      <v-file-input v-model="file_inputs" prepend-icon="mdi-music" accept="audio/*" label="Audio file"></v-file-input>
+      <v-file-input v-model="file_inputs" prepend-icon="mdi-music" accept=".mp3" label="Audio file"></v-file-input>
       <v-expand-transition>
         <div v-if="audio_file !== null">
           <v-container>
