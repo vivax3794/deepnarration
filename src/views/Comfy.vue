@@ -4,7 +4,9 @@
     <v-card-text>
       <v-text-field v-model="person_url" label="Image of a persons face" prepend-inner-icon="mdi-web">
       </v-text-field>
-      <v-icon id="arrow" size="x-large">mdi-arrow-down</v-icon>
+      <img :src="person_url" class="center"> <br />
+      <v-icon class="center" size="x-large">mdi-arrow-down</v-icon>
+      <img :src="target_url" class="center"> <br />
       <v-text-field v-model="target_url" label="Target image" prepend-inner-icon="mdi-web">
       </v-text-field>
       <v-text-field v-model="prompt" label="Guiding prompt">
@@ -15,10 +17,14 @@
 </template>
 
 <style scoped>
-#arrow {
+.center {
   margin-left: 50%;
   transform: translateX(-50%);
   margin-bottom: 10px;
+}
+
+img {
+  max-width: 80%;
 }
 </style>
 
