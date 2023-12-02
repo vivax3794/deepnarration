@@ -43,6 +43,11 @@
                 </v-range-slider>
               </v-col>
             </v-row>
+            <v-row>
+              <audio style="width: 100%" controls ref="audio_element">
+                <source :src="audio_blob" type="audio/mp3">
+              </audio>
+            </v-row>
           </v-container>
           <v-alert v-if="Math.abs(1 - audio_scale) >= 0.1" color="red" title="Length mismatch"
             :text="`Your video will be ${story.total_time.toFixed(2)} seconds, your audio is ${audio_length?.toFixed(2)} seconds, and will be scaled to fit.`"></v-alert>
@@ -212,6 +217,9 @@ function calculatePeaks() {
   create_audio_file(cropped_audio_data);
 }
 
+const audio_blob = ref("");
+const audio_element: Ref<HTMLAudioElement | undefined> = ref(undefined);
+
 function create_audio_file(croped_audio: Float32Array) {
   const orig_buffer = audio_buffer.value!;
 
@@ -221,9 +229,14 @@ function create_audio_file(croped_audio: Float32Array) {
 
   new_buffer.copyToChannel(croped_audio, 0);
 
-  const blob: Blob = audioBufferToBlob(new_buffer);
+  let blob: Blob = audioBufferToBlob(new_buffer);
+  blob = new Blob([blob], { type: 'audio/mp3' });
   const new_file = new File([blob], audio_file.value!.name);
 
   story.audio_file = new_file;
+  audio_blob.value = URL.createObjectURL(blob);
+
+  console.log("Loaded new blob");
+  audio_element.value!.load();
 }
 </script>
