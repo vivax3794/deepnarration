@@ -1,29 +1,29 @@
 <template>
   <v-card id="about">
-    <v-title id="title">About</v-title>
+    <v-card-title id="title">About Deepnarration</v-card-title>
     <v-card-text>
-      Vel eveniet dolorem culpa eius itaque quae. Soluta voluptatem quia ipsam. Eligendi aliquam quia consequuntur est aut
-      placeat.
+      Welcome to Deepnarration, your cutting-edge companion in the realm of digital content creation. At its core, Deepnarration bridges the creative gap between imagination and visualization through advanced machine learning technologies.
+      Video and Image Generation: Through our specialized API, the system takes on the role of a virtual artist, creating images or compiling videos that resonate with your narrative. Whether it’s a single image or a video sequence, the AI is equipped to handle a variety of creative tasks:
+    </v-card-text>
+    <v-card-text>
+      <ul>
+        <li><strong>Story Generator:</strong> Our story module is an innovative video generator that crafts your story scene by scene. You can inject custom images, select music, and even synchronize the visuals to the beat, allowing for a video that’s not just seen but felt.</li>
+        <li><strong>Face Swap:</strong> The face swap feature is a playful yet sophisticated tool that combines a target and a source image to produce a hybrid visual. Accompanied by your prompts, it refines the results to meet your specific creative needs.</li>
+      </ul>
+    </v-card-text>
+  </v-card>
 
-      Est sit quia quo error velit in. Cum assumenda voluptas architecto accusamus ex totam. Provident eum nisi recusandae
-      deleniti voluptatem veritatis numquam. Suscipit facilis odit eos sit dolorem et accusantium.
-
-      Odit qui et porro quia ratione sint id. Architecto fugiat quae vel dolore necessitatibus harum. Itaque qui quibusdam
-      consequatur quia ratione. Porro expedita eos est dignissimos nobis. Ut nihil tempore quo aliquid. Molestias magni
-      eum consequuntur ratione.
-
-      Et facere eum ad ea harum ducimus dicta eum. Dicta rerum quod quia error animi. Et aut et blanditiis quo nihil.
-      Excepturi officia sequi et iusto assumenda et veritatis. Sit deleniti iste omnis suscipit omnis enim expedita.
-
-      Debitis accusamus officia expedita sed modi quis. Qui excepturi voluptatum rerum est blanditiis nulla corporis
-      dolorem. Distinctio consectetur adipisci et quos. Nisi non deserunt cupiditate. Autem repudiandae ut eius dolores.
-      Deleniti ut iusto non nostrum soluta.
+  <v-card id="firstTime">
+    <v-card-title id="title">First Usage</v-card-title>
+    <v-card-text>
+      Visit our Discord to get your results.
+      <v-btn color="primary" href="https://discord.matissetec.dev/" target="_blank">Join Discord</v-btn>
     </v-card-text>
   </v-card>
 </template>
 
 <style scoped>
-#about {
+#about firstTime{
   margin-top: 20px;
   margin-left: 20%;
   margin-right: 20%;
@@ -31,5 +31,21 @@
 }
 
 #title {
-  font-size: 3rem;
-}</style>
+  font-size: 2.75rem;
+  margin: 20px 0px 20px 0px;
+}
+
+ul {
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+#firstTime {
+  margin-top: 30px; /* Adjust the spacing between cards */
+}
+
+</style>
