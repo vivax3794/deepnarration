@@ -28,20 +28,20 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-btn width="100%" :color="story.tts ? 'green' : 'red'" @click="story.tts = !story.tts">
+            <v-btn width="100%" :color="story.tts ? 'green' : 'yellow'" @click="story.tts = !story.tts">
               <v-icon>{{ story.tts ? "mdi-microphone" : "mdi-microphone-off" }}</v-icon>
               {{ story.tts ? "TTS" : "No Audio" }}
             </v-btn>
           </v-col>
           <v-col>
-            <v-btn width="100%" :color="story.generate_images ? 'green' : 'red'"
+            <v-btn width="100%" :color="story.generate_images ? 'green' : 'yellow'"
               @click="story.generate_images = !story.generate_images">
               <v-icon>{{ story.generate_images ? "mdi-image-auto-adjust" : "mdi-web" }}</v-icon>
               {{ story.generate_images ? "100% AI Images" : "Inserted keyframe images" }}
             </v-btn>
           </v-col>
           <v-col>
-            <v-btn width="100%" :color="story.peak_detection ? 'green' : 'red'"
+            <v-btn width="100%" :color="story.peak_detection ? 'green' : 'yellow'"
               @click="story.peak_detection = !story.peak_detection">
               <v-icon>{{ story.peak_detection ? "mdi-music" : "mdi-pen" }}</v-icon>
               {{ story.peak_detection ? "Peak Detection" : "Manual Strength Values" }}

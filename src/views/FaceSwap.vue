@@ -38,15 +38,15 @@ import ResultQueue from '@/components/ResultQueue.vue';
 
 const discord = useDiscordStore();
 
-const target_url = useStorage("Comfy-Target", "");
-const person_url = useStorage("Comfy-Person", "");
-const prompt = useStorage("Comfy-Prompt", "");
+const target_url = useStorage("FaceSwap-Target", "");
+const person_url = useStorage("FaceSwap-Person", "");
+const prompt = useStorage("FaceSwap-Prompt", "");
 
 const req_id = ref(0);
 const show_result = ref(false);
 
 function submit() {
-  const url = "https://deepnarrationapi.matissetec.dev/startComfyPrompt"
+  const url = "https://deepnarrationapi.matissetec.dev/startFaceSwap"
 
   req_id.value = Math.floor(Math.random() * 1000);
 
