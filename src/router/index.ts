@@ -19,8 +19,12 @@ const routes = [
         component: () => import("@/views/Story.vue"),
       },
       {
-        path: "/comfy",
-        component: () => import("@/views/Comfy.vue"),
+        path: "/faceSwap",
+        component: () => import("@/views/FaceSwap.vue"),
+      },
+      {
+        path: "/similarImages",
+        component: () => import("@/views/SimilarImages.vue"),
       }
     ]
   },
