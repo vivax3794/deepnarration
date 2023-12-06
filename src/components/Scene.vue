@@ -3,10 +3,10 @@
     <v-btn id="delete" color="red" icon="mdi-delete" variant="plain" size="x-large" @click="$emit('delete')"></v-btn>
     <v-card>
       <v-tabs v-model="tab" bg-color="purple">
-        <v-tab value="basic">Basic</v-tab>
+        <v-tab value="basic">Basic Settings</v-tab>
         <v-expand-transition>
           <v-tab value="image" v-if="!story.generate_images">
-            Images
+            Images Settings
           </v-tab>
         </v-expand-transition>
       </v-tabs>
