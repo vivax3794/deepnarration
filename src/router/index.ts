@@ -25,6 +25,10 @@ const routes = [
       {
         path: "/similarImages",
         component: () => import("@/views/SimilarImages.vue"),
+      },
+      {
+        path: "/outpaintImage",
+        component: () => import("@/views/OutpaintImage.vue"),
       }
     ]
   },
