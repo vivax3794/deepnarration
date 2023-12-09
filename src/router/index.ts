@@ -29,7 +29,11 @@ const routes = [
       {
         path: "/outpaintImage",
         component: () => import("@/views/OutpaintImage.vue"),
-      }
+      },
+      {
+        path: "/parallax",
+        component: () => import("@/views/Parallax.vue"),
+      }.
     ]
   },
   {

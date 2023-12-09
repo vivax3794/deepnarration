@@ -17,6 +17,7 @@
         <v-list-item title="Face Swap" prepend-icon="mdi-face-recognition" to="/FaceSwap"></v-list-item>
         <v-list-item title="Similar Images" prepend-icon="mdi-image-multiple" to="/SimilarImages"></v-list-item>
         <v-list-item title="Outpaint Image" prepend-icon="mdi-vector-rectangle" to="/OutpaintImage"></v-list-item>
+        <v-list-item title="Parallax" prepend-icon="mdi-image-frame" to="/parallax"></v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-main>
