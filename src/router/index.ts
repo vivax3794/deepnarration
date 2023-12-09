@@ -33,7 +33,7 @@ const routes = [
       {
         path: "/parallax",
         component: () => import("@/views/Parallax.vue"),
-      }
+      }.
     ]
   },
   {
