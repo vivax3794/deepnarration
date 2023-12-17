@@ -34,8 +34,8 @@ import ResultQueue from '@/components/ResultQueue.vue';
 
 const discord = useDiscordStore();
 
-const target_url = useStorage("Comfy-Target", "");
-const prompt = useStorage("Comfy-Prompt", "");
+const target_url = useStorage("SimilarImages-Target", "");
+const prompt = useStorage("SimilarImages-Prompt", "");
 
 const req_id = ref(0);
 const show_result = ref(false);

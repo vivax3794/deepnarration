@@ -2,13 +2,14 @@
   <ResultQueue :request_id="req_id" v-model="show_result"></ResultQueue>
   <v-card style="margin-top: 20px">
     <v-card-text>
-      <v-text-field v-model="person_url" label="Image of a persons face" prepend-inner-icon="mdi-web">
+      <v-text-field v-model="firstImage" label="First Image" prepend-inner-icon="mdi-vector-arrange-below">
       </v-text-field>
-      <img :src="person_url" class="center"> <br />
-      <v-icon class="center" size="x-large">mdi-arrow-down</v-icon>
-      <img :src="target_url" class="center"> <br />
-      <v-text-field v-model="target_url" label="Target image" prepend-inner-icon="mdi-web">
+      <v-select label="Select" v-model="firstAdapter" :items="['close', 'face', 'close-face']"></v-select>
+      <img :src="firstImage" class="center"> <br />
+      <v-text-field v-model="secondImage" label="Second Image" prepend-inner-icon="mdi-vector-arrange-below">
       </v-text-field>
+      <v-select label="Select" v-model="secondAdapter" :items="['close', 'face', 'close-face']"></v-select>
+      <img :src="secondImage" class="center"> <br />
       <v-text-field v-model="prompt" label="Guiding prompt">
       </v-text-field>
       <TimeoutButton color="blue" width="100%" @clicked="submit()">Submit</TimeoutButton>
@@ -38,23 +39,28 @@ import ResultQueue from '@/components/ResultQueue.vue';
 
 const discord = useDiscordStore();
 
-const target_url = useStorage("FaceSwap-Target", "");
-const person_url = useStorage("FaceSwap-Person", "");
-const prompt = useStorage("FaceSwap-Prompt", "");
+const firstImage = useStorage("LogoEmerge-FirstImage", "");
+const firstAdapter = useStorage("LogoEmerge-FirstAdapter", "");
+const secondImage = useStorage("LogoEmerge-SecondImage", "");
+const secondAdapter = useStorage("LogoEmerge-SecondAdapter", "");
+
+const prompt = useStorage("LogoEmerge-Prompt", "");
 
 const req_id = ref(0);
 const show_result = ref(false);
 
 function submit() {
-  const url = "https://deepnarrationapi.matissetec.dev/startFaceSwap"
+  const url = "https://deepnarrationapi.matissetec.dev/startLogoEmerge"
 
   req_id.value = Math.floor(Math.random() * 1000);
 
   const body = {
     discordId: discord.user_id,
     discordUsername: discord.username,
-    personPicture: person_url.value,
-    targetPicture: target_url.value,
+    firstImage: firstImage.value,
+    firstAdapter: firstAdapter.value,
+    secondImage: secondImage.value,
+    secondAdapter: secondAdapter.value,
     prompt: prompt.value,
     id: req_id.value,
   }
