@@ -1,4 +1,11 @@
 <template>
+  <v-card id="firstTime">
+    <v-card-title id="title">In Beta</v-card-title>
+    <v-card-text>
+      The site is currently in beta, be patient with us
+    </v-card-text>
+  </v-card>
+
   <v-card id="about">
     <v-card-title id="title">About Deepnarration</v-card-title>
     <v-card-text>

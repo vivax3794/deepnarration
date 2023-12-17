@@ -6,8 +6,10 @@
         </v-text-field>
         <img :src="target_url" class="center"> <br />
         <v-text-field v-model="prompt" label="Guiding prompt"></v-text-field>
-        <v-text-field type="number" v-model="width" label="Width"></v-text-field>
-        <v-text-field type="number" v-model="height" label="Height"></v-text-field>
+        <v-text-field type="number" v-model="left" label="left"></v-text-field>
+        <v-text-field type="number" v-model="right" label="right"></v-text-field>
+        <v-text-field type="number" v-model="up" label="up"></v-text-field>
+        <v-text-field type="number" v-model="down" label="down"></v-text-field>
         <TimeoutButton color="blue" width="100%" @clicked="submit()">Submit</TimeoutButton>
       </v-card-text>
     </v-card>
@@ -37,8 +39,10 @@
   
   const target_url = useStorage("OutpaintImages-Target", "");
   const prompt = useStorage("OutpaintImages-Prompt", "");
-  const width = useStorage("OutpaintImages-Width", "");
-  const height = useStorage("OutpaintImages-Height", "");
+  const left = useStorage("OutpaintImages-Left", "");
+  const right = useStorage("OutpaintImages-Right", "");
+  const up = useStorage("OutpaintImages-Up", "");
+  const down = useStorage("OutpaintImages-Down", "");
   
   const req_id = ref(0);
   const show_result = ref(false);
@@ -53,8 +57,10 @@
       discordUsername: discord.username,
       targetPicture: target_url.value,
       prompt: prompt.value,
-      width: width.value,
-      height: height.value,
+      left: left.value,
+      right: right.value,
+      up: up.value,
+      down: down.value,
       id: req_id.value,
     }
   

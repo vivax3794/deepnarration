@@ -31,8 +31,16 @@ const routes = [
         component: () => import("@/views/OutpaintImage.vue"),
       },
       {
+        path: "/hologram",
+        component: () => import("@/views/Hologram.vue"),
+      },
+      {
         path: "/parallax",
         component: () => import("@/views/Parallax.vue"),
+      },
+      {
+        path: "/logoEmerge",
+        component: () => import("@/views/LogoEmerge.vue"),
       },
     ]
   },
