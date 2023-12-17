@@ -7,7 +7,7 @@
           <v-container>
             <v-row>
               <v-col :cols="1">
-                <v-range-slider :max="1" :min="0" v-model="strengthRange" direction="vertical"
+                <v-range-slider :max="1" :min="0" step=".05" v-model="strengthRange" direction="vertical" thumb-label="always"
                   @update:focused="(focused) => { if (!focused) calculatePeaks() }"
                   @update:model-value="() => { if ((audio_buffer?.duration || 0) < 30) calculatePeaks() }">
                   <template v-slot:prepend>

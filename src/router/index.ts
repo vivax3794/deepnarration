@@ -41,7 +41,7 @@ const routes = [
       {
         path: "/logoEmerge",
         component: () => import("@/views/LogoEmerge.vue"),
-      }
+      },
     ]
   },
   {
