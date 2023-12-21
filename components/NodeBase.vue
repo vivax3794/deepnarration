@@ -1,6 +1,6 @@
 <template>
     <v-sheet id="node" :elevation="24" :color="held ? 'yellow-darken-4' : color" rounded width="min-content">
-        <h1 id="" @mousedown="start_hold" @mouseup="() => held = false">{{ title }}</h1>
+        <h1 id="" @mousedown="start_hold" @mouseup="end_hold">{{ title }}</h1>
 
         <slot></slot>
     </v-sheet>
@@ -28,6 +28,12 @@ function start_hold(event: MouseEvent) {
     delta_x = x.value - event.pageX;
     delta_y = y.value - event.pageY;
     held.value = true;
+    document.addEventListener("mousemove", mousemove);
+}
+
+function end_hold(event: MouseEvent) {
+    held.value = false;
+    document.removeEventListener("mousemove", mousemove);
 }
 
 function mousemove(event: MouseEvent) {
@@ -37,9 +43,6 @@ function mousemove(event: MouseEvent) {
     x.value = event.pageX + delta_x;
     y.value = event.pageY + delta_y;
 }
-onMounted(() => {
-    document.addEventListener("mousemove", mousemove);
-})
 </script>
 
 <style scoped>

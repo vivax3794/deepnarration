@@ -1,7 +1,5 @@
-
 <template>
-    <NodeBase title="Delay" :color="NODE_DEBUG">
-        <div v-if="loading">SIMULATED API REQUEST</div>
+    <NodeBase :title="`Triggered: ${count}`" :color="NODE_DEBUG">
         <SocketOutput kind="number" :value="value" name="" :calc="calc" :dirty="dirty" />
         <SocketInput kind="number" ref="input" v-model="value" v-model:dirty="dirty" />
     </NodeBase>
@@ -11,21 +9,15 @@
 import type { SocketInput } from '#build/components';
 import { NODE_DEBUG } from '~/lib/colors';
 
-
 let value = ref("");
 let input: Ref<InstanceType<typeof SocketInput> | null> = ref(null);
 
-let loading = ref(false);
+let count = ref(0);
 let dirty = ref(true);
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
 async function calc(): Promise<void> {
+    count.value += 1;
     await input.value!.calc();
-
-    loading.value = true;
-    await sleep(2000);
-    loading.value = false;
 
     dirty.value = false;
 }

@@ -34,10 +34,11 @@ onUnmounted(() => clearInterval(interval));
 
 <style scoped>
 .line {
-    position: absolute;
+    pointer-events: none;
+    position: fixed;
     --line-width: 5px;
     background-color: pink;
-    z-index: -1;
+    /* z-index: -1; */
 
     --xs: calc(v-bind(xs) * 1px);
     --ys: calc(v-bind(ys) * 1px);

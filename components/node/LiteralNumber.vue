@@ -1,10 +1,14 @@
 <template>
-    <NodeBase title="Number" color="teal-darken-4">
-        <SocketOutput kind="number" name="Number" :calc="async () => { }" :value="number.toString()" />
-        <v-text-field type="number" v-model="number"></v-text-field>
+    <NodeBase title="Number" :color="NODE_MATH">
+        <SocketOutput kind="number" name="" :calc="async () => { dirty = false }" :value="number.toString()"
+            v-model:dirty="dirty" />
+        <v-text-field type="number" v-model="number" @update:model-value="dirty = true"></v-text-field>
     </NodeBase>
 </template>
 
 <script setup lang="ts">
+import { NODE_MATH } from '~/lib/colors';
+
 let number = ref(0);
+let dirty = ref(true);
 </script>
