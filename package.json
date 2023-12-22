@@ -3,7 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "prod": "nuxt build; PORT=9009 node .output/server/index.mjs",
+        "prod": "nuxt build; PORT=3000 node .output/server/index.mjs",
         "build": "nuxt build",
         "dev": "nuxt dev",
         "generate": "nuxt generate",

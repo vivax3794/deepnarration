@@ -48,8 +48,11 @@ onUnmounted(() => clearInterval(interval));
     --ye: calc(v-bind(ye) * 1px);
 
     --xm: calc((var(--xs) + var(--xe)) / 2);
-    --lw: calc(abs(var(--xe) - var(--xs)) / 2);
-    --lh: calc(abs(var(--ye) - var(--ys)));
+    --lwr: calc((var(--xe) - var(--xs))/ 2);
+    --lhr: calc(var(--ye) - var(--ys));
+
+    --lw: calc(max(var(--lwr), -1*var(--lwr)));
+    --lh: calc(max(var(--lhr), -1*var(--lhr)));
 }
 
 #start {
