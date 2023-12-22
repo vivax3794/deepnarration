@@ -1,10 +1,28 @@
 <template>
-    <div id="border" :class="{ animated_border: working, static_border: dirty && !working }">
-        <v-sheet id="node" :elevation="24" :color="held ? 'yellow-darken-4' : color" rounded width="min-content">
+    <div id="border" :class="{ animated_border: working || no_cache, static_border: dirty && !working && !no_cache }">
+        <v-sheet id="node" :elevation="24" :color="held ? 'yellow-darken-4' : color" rounded width="min-content"
+            @contextmenu="open_menu">
             <h1 id="" @mousedown="start_hold">{{ title }}</h1>
 
             <slot></slot>
         </v-sheet>
+        <v-menu activator="parent" v-model="menu" :open-on-click="false">
+            <v-list>
+                <slot name="context"></slot>
+                <v-list-item>
+                    <v-btn variant="plain" :disabled="dirty || no_cache" @click="$emit('update:dirty', true)">Invalidate
+                        Cache</v-btn>
+                </v-list-item>
+                <v-list-item>
+                    <v-btn variant="plain" @click="no_cache = !no_cache; $emit('update:dirty', true)">
+                        {{ no_cache ? "Enable Cache" : "Disable Cache" }}
+                    </v-btn>
+                </v-list-item>
+                <v-list-item>
+                    <v-btn variant="plain" color="red" @click="$emit('delete')">Delete Node</v-btn>
+                </v-list-item>
+            </v-list>
+        </v-menu>
     </div>
 </template>
 
@@ -16,7 +34,7 @@ let props = withDefaults(defineProps<{
     y: number,
     page_scale: number,
     dirty: boolean,
-    working: boolean,
+    working?: boolean,
 }>(), {
     title: "NO TITLE",
     color: "red",
@@ -30,13 +48,25 @@ let emit = defineEmits<{
     (e: "update:x", value: number): void,
     (e: "update:y", value: number): void,
     (e: "update:dirty", value: boolean): void,
+    (e: "delete"): void,
 }>();
 
 let delta_x = 0;
 let delta_y = 0;
 
-let held = ref(false);
+let no_cache = ref(false);
+watch(() => props.dirty, () => {
+    console.log(no_cache.value, !props.dirty);
+    if (no_cache.value && !props.dirty) setTimeout(() => emit("update:dirty", true), 100);
+})
 
+let menu = ref(false);
+function open_menu(event: Event) {
+    event.preventDefault();
+    menu.value = true;
+}
+
+let held = ref(false);
 function start_hold(event: MouseEvent) {
     delta_x = props.x - event.pageX / props.page_scale;
     delta_y = props.y - event.pageY / props.page_scale;
@@ -58,6 +88,12 @@ function mousemove(event: MouseEvent) {
     emit("update:x", event.pageX / props.page_scale + delta_x);
     emit("update:y", event.pageY / props.page_scale + delta_y);
 }
+
+let border_color = computed(() => {
+    if (props.working) return "green"
+    if (no_cache.value) return "yellow"
+    return "red"
+})
 </script>
 
 <style scoped>
@@ -82,7 +118,7 @@ function mousemove(event: MouseEvent) {
 
 /* https://stackoverflow.com/a/52963366 */
 .animated_border {
-    background-image: linear-gradient(90deg, green 50%, transparent 50%), linear-gradient(90deg, green 50%, transparent 50%), linear-gradient(0deg, green 50%, transparent 50%), linear-gradient(0deg, green 50%, transparent 50%);
+    background-image: linear-gradient(90deg, v-bind(border_color) 50%, transparent 50%), linear-gradient(90deg, v-bind(border_color) 50%, transparent 50%), linear-gradient(0deg, v-bind(border_color) 50%, transparent 50%), linear-gradient(0deg, v-bind(border_color) 50%, transparent 50%);
     background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
     background-size: 15px 4px, 15px 4px, 4px 15px, 4px 15px;
     background-position: left top, right bottom, left bottom, right top;

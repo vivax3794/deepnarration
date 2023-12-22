@@ -16,7 +16,6 @@ let color = computed(() => {
         default: return "red"
     }
 });
-
 </script>
 
 <style scoped>

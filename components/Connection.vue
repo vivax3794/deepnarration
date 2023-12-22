@@ -7,6 +7,8 @@
 <script setup lang="ts">
 import { onUnmounted, computed, ref } from 'vue';
 
+import { SOCKET_NUMBER } from '~/lib/colors';
+
 let props = defineProps<{
     from: HTMLElement,
     to: HTMLElement,
@@ -38,8 +40,7 @@ onUnmounted(() => clearInterval(interval));
     pointer-events: none;
     position: fixed;
     --line-width: 5px;
-    background-color: pink;
-    /* z-index: -1; */
+    background-color: v-bind(SOCKET_NUMBER);
 
     --xs: calc(v-bind(xs) * 1px);
     --ys: calc(v-bind(ys) * 1px);

@@ -20,7 +20,7 @@ let props = defineProps<{
 let working: Promise<void> | null = null;
 
 async function get_value(): Promise<string> {
-    if (props.dirty) {
+    if (props.dirty || working !== null) {
         if (working === null) {
             working = props.calc();
         }
@@ -34,16 +34,33 @@ async function get_value(): Promise<string> {
 const socket_clicked = inject(inject_key);
 const socket: Ref<HTMLElement | null> = ref(null);
 
-let make_inp_dirty: (() => void) | null = null;
+let make_inp_dirty: (() => void)[] = [];
+let reset_other: (() => void)[] = [];
+let kill_connection: (() => void)[] = [];
 watch(() => props.dirty, () => {
     console.log("DIRTY CHANGED", props.dirty);
     if (make_inp_dirty === null) return;
-    if (props.dirty) make_inp_dirty();
+    if (props.dirty) make_inp_dirty.forEach((f) => f());
 })
 
-function update(data: InputToOutput) {
-    make_inp_dirty = data.make_dirty
+function update(data: InputToOutput, kill: () => void) {
+    make_inp_dirty.push(data.make_dirty);
+    reset_other.push(data.reset);
+    kill_connection.push(kill)
 }
+function reset() {
+    // TODO: clear out stuff?
+}
+function reset_full() {
+    console.log("CLEARING OUT CONNECTED!")
+    console.log(reset_other)
+    reset_other.forEach((f) => f())
+    kill_connection.forEach((f) => f())
+
+    reset_other = [];
+    kill_connection = [];
+}
+onUnmounted(reset_full);
 
 function clicked() {
     socket_clicked!({
@@ -53,6 +70,7 @@ function clicked() {
         update_value: update,
         data: {
             get_value,
+            reset,
         }
     });
 }

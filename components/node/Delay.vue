@@ -1,6 +1,6 @@
 
 <template>
-    <NodeBase title="Delay" :color="NODE_DEBUG" v-bind:dirty="dirty" v-bind="$attrs" :working="loading">
+    <NodeBase title="Delay" :color="NODE_DEBUG" v-model:dirty="dirty" v-bind="$attrs" :working="loading">
         <SocketOutput kind="number" :value="value" name="" :calc="calc" :dirty="dirty" />
         <SocketInput kind="number" ref="input" v-model="value" v-model:dirty="dirty" />
     </NodeBase>
@@ -20,12 +20,11 @@ let dirty = ref(true);
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function calc(): Promise<void> {
+    dirty.value = false;
     await input.value!.calc();
 
     loading.value = true;
     await sleep(2000);
     loading.value = false;
-
-    dirty.value = false;
 }
 </script>

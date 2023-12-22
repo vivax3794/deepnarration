@@ -1,5 +1,5 @@
 <template>
-    <NodeBase title="Add" :color="NODE_MATH" v-bind:dirty="dirty" v-bind="$attrs">
+    <NodeBase title="Add" :color="NODE_MATH" v-model:dirty="dirty" v-bind="$attrs">
         <SocketOutput kind="number" :value="value" name="" :calc="calc" :dirty="dirty" />
         <SocketInput kind="number" ref="input_a" v-model="a" v-model:dirty="dirty" />
         <SocketInput kind="number" ref="input_b" v-model="b" v-model:dirty="dirty" />
@@ -19,12 +19,12 @@ let input_a: Ref<InstanceType<typeof SocketInputVue> | null> = ref(null);
 let input_b: Ref<InstanceType<typeof SocketInputVue> | null> = ref(null);
 
 async function calc(): Promise<void> {
+    dirty.value = false;
     await Promise.all([input_a.value!.calc(), input_b.value!.calc()]);
 
-    let ap = Number.parseInt(a.value);
-    let bp = Number.parseInt(b.value);
+    let ap = Number.parseFloat(a.value);
+    let bp = Number.parseFloat(b.value);
 
     value.value = (ap + bp).toString();
-    dirty.value = false;
 }
 </script>

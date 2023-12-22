@@ -1,5 +1,5 @@
 <template>
-    <NodeBase :title="number.toString()" :color="NODE_MATH" v-bind:dirty="dirty" v-bind="$attrs">
+    <NodeBase :title="number.toString()" :color="NODE_MATH" v-model:dirty="dirty" v-bind="$attrs">
         <SocketInput kind="number" ref="input" v-model="number" v-model:dirty="dirty" />
         <v-btn @click="calc">Calculate</v-btn>
     </NodeBase>
@@ -16,7 +16,7 @@ let dirty = ref(true);
 let input: Ref<InstanceType<typeof SocketInput> | null> = ref(null);
 
 async function calc(): Promise<void> {
-    await input.value!.calc();
     dirty.value = false;
+    await input.value!.calc();
 }
 </script>

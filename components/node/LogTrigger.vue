@@ -1,7 +1,13 @@
 <template>
-    <NodeBase :title="`Triggered: ${count}`" :color="NODE_DEBUG" v-bind:dirty="dirty" v-bind="$attrs">
+    <NodeBase :title="`Triggered: ${count}`" :color="NODE_DEBUG" v-model:dirty="dirty" v-bind="$attrs">
         <SocketOutput kind="number" :value="value" name="" :calc="calc" :dirty="dirty" />
         <SocketInput kind="number" ref="input" v-model="value" v-model:dirty="dirty" />
+
+        <template v-slot:context>
+            <v-list-item>
+                <v-btn variant="plain" @click="count = 0">Reset Count</v-btn>
+            </v-list-item>
+        </template>
     </NodeBase>
 </template>
 
@@ -17,8 +23,7 @@ let dirty = ref(true);
 
 async function calc(): Promise<void> {
     count.value += 1;
-    await input.value!.calc();
-
     dirty.value = false;
+    await input.value!.calc();
 }
 </script>

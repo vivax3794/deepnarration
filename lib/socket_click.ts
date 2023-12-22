@@ -1,24 +1,26 @@
 import { type InjectionKey } from "vue";
 
 export interface OutputToInput {
-    get_value: () => Promise<string>
+    get_value: () => Promise<string>,
+    reset: () => void,
 }
 export interface InputToOutput {
     make_dirty: () => void
+    reset: () => void,
 }
 
 export interface SocketClickInput {
     element: HTMLElement,
     io: "input",
     kind: string,
-    update_value: (info: OutputToInput) => void
+    update_value: (info: OutputToInput, kill_connection: () => void) => void
     data: InputToOutput,
 }
 export interface SocketClickOutput {
     element: HTMLElement,
     io: "output",
     kind: string,
-    update_value: (info: InputToOutput) => void,
+    update_value: (info: InputToOutput, kill_connection: () => void) => void,
     data: OutputToInput,
 }
 

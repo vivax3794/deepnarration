@@ -1,6 +1,6 @@
 <template>
     <div ref="socket" style="margin-left: -20px">
-        <Socket :kind="kind" @click="clicked" />
+        <Socket :kind="kind" @click="clicked" @contextmenu="right_click" />
     </div>
 </template>
 
@@ -19,10 +19,29 @@ let emit = defineEmits<{
 }>();
 
 let get_value: (() => Promise<string>) | null = null;
+let reset_other: (() => void) | null = null;
 
-function update(info: OutputToInput) {
+let kill_connection: (() => void) | null = null;
+
+function update(info: OutputToInput, kill: (() => void)) {
     get_value = info.get_value;
+    reset_other = info.reset;
+    kill_connection = kill;
 }
+function reset() {
+    console.log("CLEARING OUT INPUT SOCKET!");
+    get_value = null;
+}
+function reset_full() {
+    if (reset_other !== null) reset_other()
+    if (kill_connection !== null) kill_connection()
+
+    reset()
+
+    reset_other = null
+    kill_connection = null
+}
+onUnmounted(reset_full);
 
 async function calc(): Promise<void> {
     if (get_value === null) return;
@@ -37,18 +56,29 @@ function make_dirty() {
     emit("update:dirty", true);
 }
 
+function right_click(e: Event) {
+    e.preventDefault()
+    reset_full()
+}
+
 function clicked() {
     console.log(socket.value!);
+
+    reset_full();
+    emit("update:dirty", true);
+
     socket_clicked!({
         element: socket.value!,
         kind: props.kind,
         io: "input",
         update_value: update,
         data: {
-            make_dirty
+            make_dirty,
+            reset
         }
     });
 }
+
 
 defineExpose({
     calc,

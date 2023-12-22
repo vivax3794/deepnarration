@@ -16,21 +16,20 @@
     <v-main>
         <div id="container" @dragover="(e) => e.preventDefault()" @drop="drop" @mousemove="handle_pan" @wheel="handle_zoom">
             <div id="node_container" ref="node_container">
-                <component v-for="node in nodes" :is="node.type" :key="node.id" v-model:x="node.x" v-model:y="node.y"
-                    :page_scale="scale">
+                <component v-for="node, index in nodes" :is="node.type" :key="node.id" v-model:x="node.x" v-model:y="node.y"
+                    :page_scale="scale" @delete="nodes.splice(index, 1)">
                 </component>
             </div>
             <Connection v-for="connection in connections" :from="connection.from" :to="connection.to" :page_scale="scale" />
+            <Connection v-if="clicked_last !== null && mouse_tracker !== null" :from="clicked_last.element"
+                :to="mouse_tracker" :page_scale="scale" />
         </div>
     </v-main>
+
+    <div id="mouse_tracker" ref="mouse_tracker"></div>
 </template>
 
 <script setup lang="ts">
-// TODOS:
-// Remove nodes
-// Remove connections
-// Replace connections
-
 import { NODE_DEBUG, NODE_MATH } from "~/lib/colors";
 import NodeDisplayNumber from "~/components/node/DisplayNumber.vue";
 import NodeLiteralNumber from "~/components/node/LiteralNumber.vue";
@@ -47,6 +46,7 @@ import { type SocketClick, inject_key, type SocketClickInput, type SocketClickOu
 interface Connection {
     from: HTMLElement,
     to: HTMLElement,
+    id: number,
 }
 let connections: Ref<Connection[]> = ref([]);
 
@@ -113,6 +113,11 @@ let possible_nodes: NodeItem[] = [
 
 function add_node(comp: Component, x: number, y: number) {
     let max_id = Math.max(...nodes.value.map((node) => node.id))
+
+    if (!Number.isFinite(max_id)) {
+        max_id = 0;
+    }
+
     nodes.value.push({
         type: comp,
         x,
@@ -135,38 +140,45 @@ function drop(e: DragEvent) {
     add_node(possible_nodes[index].type, x, y);
 }
 
-let clicked_last: SocketClick | null = null;
+function remove_connection(id: number) {
+    connections.value = connections.value.filter((con) => con.id !== id);
+}
+
+let clicked_last: Ref<SocketClick | null> = ref(null);
 function socket_clicked(socket: SocketClick) {
-    if (clicked_last === null) {
-        clicked_last = socket;
+    if (clicked_last.value === null) {
+        clicked_last.value = socket;
     } else {
-        if (clicked_last.io === socket.io || clicked_last.kind !== socket.kind) {
+        if (clicked_last.value.io === socket.io || clicked_last.value.kind !== socket.kind) {
             console.log(clicked_last, socket);
-            clicked_last = null;
+            clicked_last.value = null;
             return;
         }
 
         console.log(clicked_last, socket);
+        let connection_id = Math.random();
         connections.value.push({
-            from: clicked_last.element,
-            to: socket.element
+            from: clicked_last.value.element,
+            to: socket.element,
+            id: connection_id
         });
+        let kill_connection = () => remove_connection(connection_id);
 
         let input: SocketClickInput;
         let output: SocketClickOutput;
 
-        if (socket.io === "output" && clicked_last.io == "input") {
+        if (socket.io === "output" && clicked_last.value.io == "input") {
             output = socket;
-            input = clicked_last;
-        } else if (socket.io == "input" && clicked_last.io == "output") {
-            output = clicked_last;
+            input = clicked_last.value;
+        } else if (socket.io == "input" && clicked_last.value.io == "output") {
+            output = clicked_last.value;
             input = socket;
         };
 
-        input!.update_value(output!.data);
-        output!.update_value(input!.data);
+        input!.update_value(output!.data, kill_connection);
+        output!.update_value(input!.data, kill_connection);
 
-        clicked_last = null;
+        clicked_last.value = null;
     }
 }
 provide(inject_key, socket_clicked);
@@ -176,6 +188,9 @@ let pan_y = ref(0);
 let scale = ref(1);
 
 function handle_pan(event: MouseEvent) {
+    mouse_x.value = event.pageX;
+    mouse_y.value = event.pageY;
+
     if ((event.buttons & 4) !== 0) {
         pan_x.value += event.movementX;
         pan_y.value += event.movementY;
@@ -207,9 +222,22 @@ function handle_zoom(event: WheelEvent) {
     scale.value = new_scale;
 }
 
+let mouse_x = ref(0);
+let mouse_y = ref(0);
+let mouse_tracker: Ref<HTMLElement | null> = ref(null);
+
 </script>
 
 <style scoped>
+#mouse_tracker {
+    width: 0px;
+    height: 0px;
+
+    position: fixed;
+    left: calc(v-bind(mouse_x) * 1px);
+    top: calc(v-bind(mouse_y) * 1px)
+}
+
 #container {
     width: 100%;
     height: 100%;

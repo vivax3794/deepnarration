@@ -1,5 +1,5 @@
 <template>
-    <NodeBase title="Number" :color="NODE_MATH" v-bind:dirty="dirty" v-bind="$attrs">
+    <NodeBase title="Number" :color="NODE_MATH" v-model:dirty="dirty" v-bind="$attrs">
         <SocketOutput kind="number" name="" :calc="async () => { dirty = false }" :value="number.toString()"
             v-model:dirty="dirty" />
         <v-text-field type="number" v-model="number" @update:model-value="dirty = true"></v-text-field>

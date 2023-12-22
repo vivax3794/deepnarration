@@ -1,5 +1,5 @@
 <template>
-    <NodeBase title="Random" :color="NODE_MATH" v-bind:dirty="dirty" v-bind="$attrs">
+    <NodeBase title="Random" :color="NODE_MATH" v-model:dirty="dirty" v-bind="$attrs">
         <SocketOutput kind="number" name="" :calc="calc" :value="number.toString()" v-model:dirty="dirty" />
     </NodeBase>
 </template>
@@ -11,7 +11,7 @@ let number = ref(0);
 let dirty = ref(true);
 
 async function calc() {
-    number.value = Math.random();
     dirty.value = false;
+    number.value = Math.random();
 }
 </script>
