@@ -1,5 +1,5 @@
 <template>
-    <NodeBase :title="`Triggered: ${count}`" :color="NODE_DEBUG">
+    <NodeBase :title="`Triggered: ${count}`" :color="NODE_DEBUG" v-bind:dirty="dirty" v-bind="$attrs">
         <SocketOutput kind="number" :value="value" name="" :calc="calc" :dirty="dirty" />
         <SocketInput kind="number" ref="input" v-model="value" v-model:dirty="dirty" />
     </NodeBase>

@@ -9,7 +9,8 @@ import { onUnmounted, computed, ref } from 'vue';
 
 let props = defineProps<{
     from: HTMLElement,
-    to: HTMLElement
+    to: HTMLElement,
+    page_scale: number,
 }>();
 
 let xs = ref(0);
@@ -18,7 +19,7 @@ let xe = ref(0);
 let ye = ref(0);
 
 function update() {
-    let offset = 15 / 2 - 5 / 2;
+    let offset = (15 / 2 - 5 / 2) * props.page_scale;
 
     let rect_s = props.from.getBoundingClientRect();
     xs.value = rect_s.x + offset;

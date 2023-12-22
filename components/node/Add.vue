@@ -1,5 +1,5 @@
 <template>
-    <NodeBase title="Add" :color="NODE_MATH">
+    <NodeBase title="Add" :color="NODE_MATH" v-bind:dirty="dirty" v-bind="$attrs">
         <SocketOutput kind="number" :value="value" name="" :calc="calc" :dirty="dirty" />
         <SocketInput kind="number" ref="input_a" v-model="a" v-model:dirty="dirty" />
         <SocketInput kind="number" ref="input_b" v-model="b" v-model:dirty="dirty" />

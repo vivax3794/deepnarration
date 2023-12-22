@@ -1,7 +1,7 @@
 <template>
-    <NodeBase :title="number.toString()" :color="NODE_MATH">
-        <SocketInput kind="number" ref="input" v-model="number" :dirty="true" />
-        <v-btn @click="input!.calc()">Calculate</v-btn>
+    <NodeBase :title="number.toString()" :color="NODE_MATH" v-bind:dirty="dirty" v-bind="$attrs">
+        <SocketInput kind="number" ref="input" v-model="number" v-model:dirty="dirty" />
+        <v-btn @click="calc">Calculate</v-btn>
     </NodeBase>
 </template>
 
@@ -12,5 +12,11 @@ import { type Ref } from "vue";
 import type { SocketInput } from '#build/components';
 
 let number = ref("NO VALUE");
+let dirty = ref(true);
 let input: Ref<InstanceType<typeof SocketInput> | null> = ref(null);
+
+async function calc(): Promise<void> {
+    await input.value!.calc();
+    dirty.value = false;
+}
 </script>

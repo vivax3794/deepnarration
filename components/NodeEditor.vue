@@ -14,15 +14,23 @@
     </v-navigation-drawer>
 
     <v-main>
-        <div id="container" @dragover="(e) => e.preventDefault()" @drop="drop">
-            <component v-for="node in nodes" :is="node.type" :key="node.id"></component>
-
-            <Connection v-for="connection in connections" :from="connection.from" :to="connection.to" />
+        <div id="container" @dragover="(e) => e.preventDefault()" @drop="drop" @mousemove="handle_pan" @wheel="handle_zoom">
+            <div id="node_container" ref="node_container">
+                <component v-for="node in nodes" :is="node.type" :key="node.id" v-model:x="node.x" v-model:y="node.y"
+                    :page_scale="scale">
+                </component>
+            </div>
+            <Connection v-for="connection in connections" :from="connection.from" :to="connection.to" :page_scale="scale" />
         </div>
     </v-main>
 </template>
 
 <script setup lang="ts">
+// TODOS:
+// Remove nodes
+// Remove connections
+// Replace connections
+
 import { NODE_DEBUG, NODE_MATH } from "~/lib/colors";
 import NodeDisplayNumber from "~/components/node/DisplayNumber.vue";
 import NodeLiteralNumber from "~/components/node/LiteralNumber.vue";
@@ -30,6 +38,7 @@ import NodeAdd from "~/components/node/Add.vue";
 import NodeDelay from "~/components/node/Delay.vue";
 import NodeLogTrigger from "~/components/node/LogTrigger.vue";
 import NodeIsDirty from "~/components/node/IsDirty.vue";
+import NodeRandom from "~/components/node/Random.vue";
 
 import type { Component } from "vue";
 import { markRaw } from "vue";
@@ -43,6 +52,8 @@ let connections: Ref<Connection[]> = ref([]);
 
 interface NodeInstance {
     type: Component,
+    x: number,
+    y: number,
     id: number,
 }
 let nodes: Ref<NodeInstance[]> = ref([]);
@@ -74,6 +85,12 @@ let possible_nodes: NodeItem[] = [
         tip: "Adds together two numbers",
     },
     {
+        type: markRaw(NodeRandom),
+        color: NODE_MATH,
+        name: "Random",
+        tip: "Generates a random number 0-1",
+    },
+    {
         divider: true,
         type: markRaw(NodeDelay),
         color: NODE_DEBUG,
@@ -98,6 +115,8 @@ function add_node(comp: Component, x: number, y: number) {
     let max_id = Math.max(...nodes.value.map((node) => node.id))
     nodes.value.push({
         type: comp,
+        x,
+        y,
         id: max_id + 1
     })
 }
@@ -109,8 +128,11 @@ function dragstart(e: DragEvent, index: number) {
 function drop(e: DragEvent) {
     e.preventDefault();
     let index = Number.parseInt(e.dataTransfer?.getData("text/plain")!);
-    console.log(index);
-    add_node(possible_nodes[index].type)
+
+    let x = (e.offsetX - pan_x.value) / scale.value;
+    let y = (e.offsetY - pan_y.value) / scale.value;
+
+    add_node(possible_nodes[index].type, x, y);
 }
 
 let clicked_last: SocketClick | null = null;
@@ -148,6 +170,43 @@ function socket_clicked(socket: SocketClick) {
     }
 }
 provide(inject_key, socket_clicked);
+
+let pan_x = ref(0);
+let pan_y = ref(0);
+let scale = ref(1);
+
+function handle_pan(event: MouseEvent) {
+    if ((event.buttons & 4) !== 0) {
+        pan_x.value += event.movementX;
+        pan_y.value += event.movementY;
+    }
+}
+
+let node_container: Ref<HTMLElement | null> = ref(null);
+
+function handle_zoom(event: WheelEvent) {
+    event.preventDefault();
+
+    let new_scale = scale.value - event.deltaY / 1000.0;
+    new_scale = Math.max(Math.min(new_scale, 2), 0.1)
+
+    let rect = node_container.value!.getBoundingClientRect();
+    let mouse_x = event.pageX - rect.left;
+    let mouse_y = event.pageY - rect.top;
+
+    let relative_scale = new_scale / scale.value;
+    let scaled_mouse_x = mouse_x * relative_scale;
+    let scaled_mouse_y = mouse_y * relative_scale;
+
+    let delta_x = scaled_mouse_x - mouse_x;
+    let delta_y = scaled_mouse_y - mouse_y;
+
+    pan_x.value -= delta_x;
+    pan_y.value -= delta_y;
+
+    scale.value = new_scale;
+}
+
 </script>
 
 <style scoped>
@@ -159,5 +218,15 @@ provide(inject_key, socket_clicked);
 
     background: radial-gradient(circle, white 4px, rgba(0, 0, 0, 0) 1px);
     background-size: 40px 40px;
+}
+
+#node_container {
+    width: 0px;
+    height: 0px;
+    position: relative;
+
+    left: calc(v-bind(pan_x) * 1px);
+    top: calc(v-bind(pan_y) * 1px);
+    transform: scale(v-bind(scale));
 }
 </style>

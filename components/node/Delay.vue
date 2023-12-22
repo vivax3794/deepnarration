@@ -1,7 +1,6 @@
 
 <template>
-    <NodeBase title="Delay" :color="NODE_DEBUG">
-        <div v-if="loading">SIMULATED API REQUEST</div>
+    <NodeBase title="Delay" :color="NODE_DEBUG" v-bind:dirty="dirty" v-bind="$attrs" :working="loading">
         <SocketOutput kind="number" :value="value" name="" :calc="calc" :dirty="dirty" />
         <SocketInput kind="number" ref="input" v-model="value" v-model:dirty="dirty" />
     </NodeBase>
