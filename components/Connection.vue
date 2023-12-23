@@ -7,12 +7,13 @@
 <script setup lang="ts">
 import { onUnmounted, computed, ref } from 'vue';
 
-import { SOCKET_NUMBER } from '~/lib/colors';
+import { SOCKET_NUMBER, kind_to_color } from '~/lib/colors';
 
 let props = defineProps<{
     from: HTMLElement,
     to: HTMLElement,
     page_scale: number,
+    kind: string,
 }>();
 
 let xs = ref(0);
@@ -33,6 +34,8 @@ function update() {
 }
 let interval = setInterval(update, 10);
 onUnmounted(() => clearInterval(interval));
+
+let color = computed(() => kind_to_color(props.kind));
 </script>
 
 <style scoped>
@@ -40,7 +43,8 @@ onUnmounted(() => clearInterval(interval));
     pointer-events: none;
     position: fixed;
     --line-width: 5px;
-    background-color: v-bind(SOCKET_NUMBER);
+    background-color: v-bind(color);
+    z-index: 0;
 
     --xs: calc(v-bind(xs) * 1px);
     --ys: calc(v-bind(ys) * 1px);

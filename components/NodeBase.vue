@@ -1,6 +1,6 @@
 <template>
     <div id="border" :class="{ animated_border: working || no_cache, static_border: dirty && !working && !no_cache }">
-        <v-sheet id="node" :elevation="24" :color="held ? 'yellow-darken-4' : color" rounded width="min-content"
+        <v-sheet id="node" :elevation="24" :color="held ? 'yellow-darken-4' : color" rounded width="max-content"
             @contextmenu="open_menu">
             <h1 id="" @mousedown="start_hold">{{ title }}</h1>
 
@@ -108,6 +108,7 @@ let border_color = computed(() => {
     padding: 5px;
 
     position: absolute;
+    z-index: 100;
     left: calc(v-bind(x) * 1px);
     top: calc(v-bind(y) * 1px);
 }

@@ -1,6 +1,9 @@
 <template>
-    <div ref="socket" style="margin-left: -20px">
+    <div ref="socket" style="margin-left: -20px; position: relative;">
         <Socket :kind="kind" @click="clicked" @contextmenu="right_click" />
+        <div style="position: absolute; top: -5px; left: 20px">
+            {{ name }}
+        </div>
     </div>
 </template>
 
@@ -10,15 +13,16 @@ import { inject_key, type OutputToInput } from '~/lib/socket_click';
 
 let props = defineProps<{
     kind: string,
-    modelValue: string,
+    modelValue: any,
     dirty: boolean,
+    name?: string | undefined,
 }>();
 let emit = defineEmits<{
-    (e: "update:modelValue", value: string): void
+    (e: "update:modelValue", value: any): void
     (e: "update:dirty", value: boolean): void
 }>();
 
-let get_value: (() => Promise<string>) | null = null;
+let get_value: (() => Promise<any>) | null = null;
 let reset_other: (() => void) | null = null;
 
 let kill_connection: (() => void) | null = null;
@@ -31,6 +35,7 @@ function update(info: OutputToInput, kill: (() => void)) {
 function reset() {
     console.log("CLEARING OUT INPUT SOCKET!");
     get_value = null;
+    emit("update:modelValue", undefined);
 }
 function reset_full() {
     if (reset_other !== null) reset_other()
@@ -59,6 +64,7 @@ function make_dirty() {
 function right_click(e: Event) {
     e.preventDefault()
     reset_full()
+    emit("update:dirty", true)
 }
 
 function clicked() {

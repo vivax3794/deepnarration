@@ -1,7 +1,9 @@
 <template>
-    <div v-if="name !== undefined" style="transform: translateY(15px)">{{ name }}</div>
-    <div ref="socket" style="margin-left: calc(100% + 5px);">
-        <Socket :kind="kind" @click="clicked" />
+    <div style="position: relative;">
+        <div ref="socket" style="margin-left: calc(100% + 5px);">
+            <Socket :kind="kind" @click="clicked" />
+        </div>
+        <div style="position: absolute; top: -5px; left: 100%; transform: translateX(-100%);">{{ name }}</div>
     </div>
 </template>
 
@@ -11,15 +13,15 @@ import { inject_key, type InputToOutput } from '~/lib/socket_click';
 
 let props = defineProps<{
     kind: string,
-    name: string | undefined,
+    name?: string | undefined,
     calc: () => Promise<void>,
-    value: string,
+    value: any,
     dirty: boolean,
 }>();
 
 let working: Promise<void> | null = null;
 
-async function get_value(): Promise<string> {
+async function get_value(): Promise<any> {
     if (props.dirty || working !== null) {
         if (working === null) {
             working = props.calc();

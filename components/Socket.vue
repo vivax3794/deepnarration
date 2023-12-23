@@ -3,19 +3,14 @@
 </template>
 
 <script setup lang="ts">
-import { SOCKET_NUMBER } from "~/lib/colors";
+import { SOCKET_NUMBER, SOCKET_STRING, kind_to_color } from "~/lib/colors";
 import { computed } from 'vue';
 
 let props = defineProps<{
     kind: string,
 }>();
 
-let color = computed(() => {
-    switch (props.kind) {
-        case "number": return SOCKET_NUMBER
-        default: return "red"
-    }
-});
+let color = computed(() => kind_to_color(props.kind));
 </script>
 
 <style scoped>

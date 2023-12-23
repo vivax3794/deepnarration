@@ -1,7 +1,7 @@
 import { type InjectionKey } from "vue";
 
 export interface OutputToInput {
-    get_value: () => Promise<string>,
+    get_value: () => Promise<any>,
     reset: () => void,
 }
 export interface InputToOutput {

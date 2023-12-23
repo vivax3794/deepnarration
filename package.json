@@ -3,7 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "prod": "nuxt build; PORT=3000 node .output/server/index.mjs",
+        "prod": "nuxt build; PORT=3000 node --env-file .env .output/server/index.mjs",
         "build": "nuxt build",
         "dev": "nuxt dev",
         "generate": "nuxt generate",
@@ -16,5 +16,10 @@
         "vue": "^3.3.12",
         "vue-router": "^4.2.5",
         "vuetify-nuxt-module": "^0.7.3"
+    },
+    "dependencies": {
+        "@ffmpeg/ffmpeg": "^0.12.9",
+        "@ffmpeg/util": "^0.12.1",
+        "p-retry": "^6.2.0"
     }
 }

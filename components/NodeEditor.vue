@@ -20,9 +20,10 @@
                     :page_scale="scale" @delete="nodes.splice(index, 1)">
                 </component>
             </div>
-            <Connection v-for="connection in connections" :from="connection.from" :to="connection.to" :page_scale="scale" />
+            <Connection v-for="connection in connections" :from="connection.from" :to="connection.to" :page_scale="scale"
+                :kind="connection.kind" />
             <Connection v-if="clicked_last !== null && mouse_tracker !== null" :from="clicked_last.element"
-                :to="mouse_tracker" :page_scale="scale" />
+                :kind="clicked_last.kind" :to="mouse_tracker" :page_scale="scale" />
         </div>
     </v-main>
 
@@ -30,14 +31,30 @@
 </template>
 
 <script setup lang="ts">
-import { NODE_DEBUG, NODE_MATH } from "~/lib/colors";
-import NodeDisplayNumber from "~/components/node/DisplayNumber.vue";
-import NodeLiteralNumber from "~/components/node/LiteralNumber.vue";
-import NodeAdd from "~/components/node/Add.vue";
-import NodeDelay from "~/components/node/Delay.vue";
-import NodeLogTrigger from "~/components/node/LogTrigger.vue";
-import NodeIsDirty from "~/components/node/IsDirty.vue";
-import NodeRandom from "~/components/node/Random.vue";
+import { NODE_AI, NODE_DISPLAY, NODE_CONSTANT, NODE_ACTION, NODE_LOCAL } from "~/lib/colors";
+import NodeLiteralString from "~/components/node/LiteralString.vue";
+import NodeSystemPresets from "~/components/node/SystemPresets.vue";
+import NodeDisplayString from "~/components/node/DisplayString.vue";
+import NodeInputImage from "~/components/node/LiteralImage.vue";
+import NodeDisplayImage from "~/components/node/DisplayImage.vue";
+import NodeTextGeneration from "~/components/node/TextGeneration.vue";
+import NodeImageGenerationCloudflare from "~/components/node/ImageGenerationCloudflare.vue";
+import NodeImageGenerationDeepnarration from "~/components/node/ImageGenerationDeepnarration.vue";
+import NodeDiscordWebhook from "~/components/node/DiscordWebhook.vue"
+import NodeLiteralUrl from "~/components/node/LiteralUrl.vue"
+import NodeLoadImage from "~/components/node/LoadImage.vue"
+import NodeUploadImage from "~/components/node/UploadImage.vue"
+import NodeUrlToText from "~/components/node/UrlToText.vue"
+import NodeTts from "~/components/node/Tts.vue"
+import NodeDisplayAudio from "~/components/node/DisplayAudio.vue"
+import NodeImageToVideo from "~/components/node/ImageToVideo.vue"
+import NodeCombineVideo from "~/components/node/CombineVideos.vue"
+import NodeAddAudio from "~/components/node/AddAudio.vue"
+import NodeDisplayVideo from "~/components/node/DisplayVideo.vue"
+import NodeLiteralNumber from "~/components/node/LiteralNumber.vue"
+import NodeDuration from "~/components/node/AudioDuration.vue"
+import NodeMath from "~/components/node/Math.vue"
+
 
 import type { Component } from "vue";
 import { markRaw } from "vue";
@@ -47,6 +64,7 @@ interface Connection {
     from: HTMLElement,
     to: HTMLElement,
     id: number,
+    kind: string,
 }
 let connections: Ref<Connection[]> = ref([]);
 
@@ -67,48 +85,143 @@ interface NodeItem {
 }
 let possible_nodes: NodeItem[] = [
     {
+        type: markRaw(NodeTextGeneration),
+        color: NODE_AI,
+        name: "Text Generation",
+        tip: "Use a LLM to generate text output based on inputs"
+    },
+    {
+        type: markRaw(NodeLiteralString),
+        color: NODE_CONSTANT,
+        name: "Text",
+        tip: "Constant text"
+    },
+    {
+        type: markRaw(NodeSystemPresets),
+        color: NODE_CONSTANT,
+        name: "System Prompts",
+        tip: "Predefined system prompts for common tasks."
+    },
+    {
+        type: markRaw(NodeDisplayString),
+        color: NODE_DISPLAY,
+        name: "Show String",
+        tip: "Show the input string and pass it along, also allows you to trigger the flow."
+    },
+    {
+        divider: true,
+        type: markRaw(NodeImageGenerationCloudflare),
+        color: NODE_AI,
+        name: "Image Generation (Cloudflare)",
+        tip: "Use a AI to generate image output based on inputs using workers ai (quite slow)"
+    },
+    {
+        type: markRaw(NodeImageGenerationDeepnarration),
+        color: NODE_AI,
+        name: "Image Generation (Deepnarration)",
+        tip: "Use a AI to generate image output based on inputs using matisses gpu (quite fast)"
+    },
+    {
+        type: markRaw(NodeInputImage),
+        color: NODE_CONSTANT,
+        name: "Image File",
+        tip: "Load a image file from your computer!"
+    },
+    {
+        type: markRaw(NodeDisplayImage),
+        color: NODE_DISPLAY,
+        name: "Show Image",
+        tip: "Show the input image and pass it along, also allows you to trigger the flow."
+    },
+    {
+        divider: true,
+        type: markRaw(NodeLiteralUrl),
+        color: NODE_CONSTANT,
+        name: "Url",
+        tip: "Constant url for a image"
+    },
+    {
+        type: markRaw(NodeLoadImage),
+        color: NODE_ACTION,
+        name: "Load Image",
+        tip: "Load image from a url"
+    },
+    {
+        type: markRaw(NodeUploadImage),
+        color: NODE_ACTION,
+        name: "Upload Image",
+        tip: "Upload image to imgbb.com as to get a url"
+    },
+    {
+        type: markRaw(NodeUrlToText),
+        color: NODE_LOCAL,
+        name: "Url To Text",
+        tip: "Convert a url to text, this is simply a type cast."
+    },
+    {
+        divider: true,
+        type: markRaw(NodeTts),
+        color: NODE_AI,
+        name: "Tts",
+        tip: "Convert text to spoken sound"
+    },
+    {
+        type: markRaw(NodeDisplayAudio),
+        color: NODE_DISPLAY,
+        name: "Listen to Aduio",
+        tip: "Lets you listen to your audio"
+    },
+    {
+        type: markRaw(NodeDuration),
+        color: NODE_LOCAL,
+        name: "Aduio Duration",
+        tip: "Get duration of aduio in seconds"
+    },
+    {
+        divider: true,
+        type: markRaw(NodeImageToVideo),
+        color: NODE_LOCAL,
+        name: "Static Video",
+        tip: "Generate a video of a static image"
+    },
+    {
+        type: markRaw(NodeCombineVideo),
+        color: NODE_LOCAL,
+        name: "Chain Video",
+        tip: "Chain together two videos"
+    },
+    {
+        type: markRaw(NodeAddAudio),
+        color: NODE_LOCAL,
+        name: "Add audio",
+        tip: "Add audio to a video"
+    },
+    {
+        type: markRaw(NodeDisplayVideo),
+        color: NODE_DISPLAY,
+        name: "Watch Video",
+        tip: "Watch your video"
+    },
+    {
+        divider: true,
         type: markRaw(NodeLiteralNumber),
-        color: NODE_MATH,
+        color: NODE_CONSTANT,
         name: "Number",
         tip: "Constant number"
     },
     {
-        type: markRaw(NodeDisplayNumber),
-        color: NODE_MATH,
-        name: "Display (number)",
-        tip: "Display the value of a number input"
-    },
-    {
-        type: markRaw(NodeAdd),
-        color: NODE_MATH,
-        name: "+",
-        tip: "Adds together two numbers",
-    },
-    {
-        type: markRaw(NodeRandom),
-        color: NODE_MATH,
-        name: "Random",
-        tip: "Generates a random number 0-1",
+        type: markRaw(NodeMath),
+        color: NODE_LOCAL,
+        name: "Math",
+        tip: "Evaluate any js expression with 'x' being your input"
     },
     {
         divider: true,
-        type: markRaw(NodeDelay),
-        color: NODE_DEBUG,
-        name: "Delay (DEBUG)",
-        tip: "Sleeps for 2 seconds to simulate api requests, for debugging purposes"
+        type: markRaw(NodeDiscordWebhook),
+        color: NODE_ACTION,
+        name: "Discord Webhook",
+        tip: "Send a discord webhook with your results."
     },
-    {
-        type: markRaw(NodeLogTrigger),
-        color: NODE_DEBUG,
-        name: "Log Triggeres (DEBUG)",
-        tip: "Counts how many times this node is asked to calculate its value, used to debug caching"
-    },
-    {
-        type: markRaw(NodeIsDirty),
-        color: NODE_DEBUG,
-        name: "is dirty (DEBUG)",
-        tip: "Displays wether the output is cached, used for debugging"
-    }
 ]
 
 function add_node(comp: Component, x: number, y: number) {
@@ -160,7 +273,8 @@ function socket_clicked(socket: SocketClick) {
         connections.value.push({
             from: clicked_last.value.element,
             to: socket.element,
-            id: connection_id
+            id: connection_id,
+            kind: clicked_last.value.kind,
         });
         let kill_connection = () => remove_connection(connection_id);
 
@@ -252,6 +366,7 @@ let mouse_tracker: Ref<HTMLElement | null> = ref(null);
     width: 0px;
     height: 0px;
     position: relative;
+    z-index: 100;
 
     left: calc(v-bind(pan_x) * 1px);
     top: calc(v-bind(pan_y) * 1px);
