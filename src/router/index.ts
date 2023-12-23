@@ -42,6 +42,10 @@ const routes = [
         path: "/logoEmerge",
         component: () => import("@/views/LogoEmerge.vue"),
       },
+      {
+        path: "/transparentGif",
+        component: () => import("@/views/TransparentGif.vue"),
+      },
     ]
   },
   {
