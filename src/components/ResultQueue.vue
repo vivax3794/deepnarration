@@ -6,6 +6,7 @@
         Result - {{ our_job ? 'Yours' : `Queue: ${our_position} - ${estimated_until_us}S until your turn.` }}
       </v-card-title>
       Results will be on discord, for now.
+      <v-btn color="darkgreen" href="https://discord.com/channels/799761313772863508/1131070890654834790" target="_blank">Discord Channel</v-btn>
       <v-progress-linear :model-value="time_remaing / max_time * 100" height="20" color="orange"
         :striped="time_remaing > max_time">
         Estimated Progress - If inaccurate blame matisse
