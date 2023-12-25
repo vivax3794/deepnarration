@@ -30,6 +30,5 @@ export default defineEventHandler(async (event) => {
             }
         }
     ), { retries: 5 });
-    console.log(response);
     return response.result.response;
 })

@@ -16,10 +16,12 @@ let props = defineProps<{
     modelValue: any,
     dirty: boolean,
     name?: string | undefined,
+    generic?: boolean | undefined,
 }>();
 let emit = defineEmits<{
     (e: "update:modelValue", value: any): void
     (e: "update:dirty", value: boolean): void
+    (e: "update:kind", value: string): void
 }>();
 
 let get_value: (() => Promise<any>) | null = null;
@@ -33,8 +35,8 @@ function update(info: OutputToInput, kill: (() => void)) {
     kill_connection = kill;
 }
 function reset() {
-    console.log("CLEARING OUT INPUT SOCKET!");
     get_value = null;
+    if (props.generic) emit("update:kind", "generic")
     emit("update:modelValue", undefined);
 }
 function reset_full() {
@@ -46,7 +48,10 @@ function reset_full() {
     reset_other = null
     kill_connection = null
 }
-onUnmounted(reset_full);
+onUnmounted(() => {
+    if (reset_other !== null) reset_other()
+    if (kill_connection !== null) kill_connection()
+});
 
 async function calc(): Promise<void> {
     if (get_value === null) return;
@@ -57,7 +62,6 @@ const socket_clicked = inject(inject_key);
 const socket: Ref<HTMLElement | null> = ref(null);
 
 function make_dirty() {
-    console.log("Marking input as dirty")
     emit("update:dirty", true);
 }
 
@@ -67,21 +71,24 @@ function right_click(e: Event) {
     emit("update:dirty", true)
 }
 
-function clicked() {
-    console.log(socket.value!);
+function update_kind(kind: string) {
+    emit("update:kind", kind);
+}
 
+function clicked() {
     reset_full();
     emit("update:dirty", true);
 
     socket_clicked!({
         element: socket.value!,
-        kind: props.kind,
+        kind: props.generic ? "generic" : props.kind,
         io: "input",
         update_value: update,
         data: {
             make_dirty,
             reset
-        }
+        },
+        update_kind
     });
 }
 

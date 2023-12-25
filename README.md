@@ -1,75 +1,21 @@
-# Nuxt 3 Minimal Starter
+# Deepnarration node editor
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+This node editor ties together a lot of different apis, you can you the setup by just cloning the repo (with the right branch)
+And then running the dev server.
 
-## Setup
-
-Make sure to install the dependencies:
-
-```bash
-# npm
+```
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+## Limited Nodes
+You might notice some nodes are not available, this is because they need some sort of auth or just their healthcheck failed.
+Hover over the nodes should show why they are not available.
 
-Build the application for production:
+## Does it run server or client side?
+Yes!
 
-```bash
-# npm
-npm run build
+The node graph all runs in the browser, most api calls happen from the browser.
+Auth calls that require oauth use the backend server as basically a proxy.
+This means it *should* be safe to expose your instance publicly, but I wouldnt recommend it as stuff people use it for will happen in your name.
 
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.

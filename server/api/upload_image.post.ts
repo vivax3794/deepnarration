@@ -12,7 +12,6 @@ export default defineEventHandler(async (event) => {
     })
 
     let url: string = response.data.url;
-    console.log(url);
 
     return url;
 })

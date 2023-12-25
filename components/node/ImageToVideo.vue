@@ -8,6 +8,7 @@
 
 <script setup lang="ts">
 import type { SocketInput } from '#build/components';
+import pRetry from 'p-retry';
 import { NODE_LOCAL } from '~/lib/colors';
 
 let image = ref(new Blob());
@@ -36,7 +37,7 @@ async function calc() {
         let ffmpeg = await load_ffmpeg();
 
         await ffmpeg.writeFile("input.png", await fetchFile(image.value));
-        await ffmpeg.exec(["-framerate", `1/${duration.value}`, "-loop", "1", "-i", "input.png", "-t", duration.value.toString(), "-pix_fmt", "yuv420p", "-vf", "scale=1280:-2", "output.mp4"], 10000);
+        await ffmpeg.exec(["-framerate", `1/${duration.value}`, "-loop", "1", "-i", "input.png", "-t", duration.value.toString(), "-pix_fmt", "yuv420p", "-vf", "scale=1280:-2", "output.mp4"], 1000);
         let data = await ffmpeg.readFile("output.mp4");
         video.value = new Blob([data], { type: "video/mp4" })
     });

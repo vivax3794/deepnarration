@@ -1,5 +1,5 @@
 <template>
-    <NodeBase title="Ai - Image - Cloudflare" :color="NODE_AI" v-model:dirty="dirty" v-bind="$attrs" :working="working">
+    <NodeBase title="Ai - Image" :color="NODE_AI" v-model:dirty="dirty" v-bind="$attrs" :working="working">
         <SocketInput name="Prompt" kind="string" v-model:dirty="dirty" v-model="prompt" ref="prompt_element" />
         <SocketOutput kind="image" :dirty="dirty" :value="result" :calc="calc" />
     </NodeBase>

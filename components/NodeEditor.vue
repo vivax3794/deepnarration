@@ -1,11 +1,13 @@
 <template>
+    <v-snackbar :text="error_message" v-model="error" location="top center" color="red"></v-snackbar>
     <v-navigation-drawer permanent>
         <template v-for="node, index in possible_nodes">
             <v-divider v-if="node.divider === true" thickness="4px"></v-divider>
-            <v-tooltip :text="node.tip">
+            <v-tooltip :text="health_checks?.[index] === undefined ? node.tip : health_checks[index]">
                 <template v-slot:activator="{ props }">
-                    <v-card v-bind="props" class="pa-2 ma-3" :color="node.color" draggable="true"
-                        @dragstart="(e) => dragstart(e, index)">
+                    <v-card v-bind="props" class="pa-2 ma-3"
+                        :color="health_checks?.[index] === undefined ? node.color : 'gray'"
+                        :draggable="health_checks?.[index] === undefined" @dragstart="(e) => dragstart(e, index)">
                         {{ node.name }}
                     </v-card>
                 </template>
@@ -31,34 +33,9 @@
 </template>
 
 <script setup lang="ts">
-import { NODE_AI, NODE_DISPLAY, NODE_CONSTANT, NODE_ACTION, NODE_LOCAL } from "~/lib/colors";
-import NodeLiteralString from "~/components/node/LiteralString.vue";
-import NodeSystemPresets from "~/components/node/SystemPresets.vue";
-import NodeDisplayString from "~/components/node/DisplayString.vue";
-import NodeInputImage from "~/components/node/LiteralImage.vue";
-import NodeDisplayImage from "~/components/node/DisplayImage.vue";
-import NodeTextGeneration from "~/components/node/TextGeneration.vue";
-import NodeImageGenerationCloudflare from "~/components/node/ImageGenerationCloudflare.vue";
-import NodeImageGenerationDeepnarration from "~/components/node/ImageGenerationDeepnarration.vue";
-import NodeDiscordWebhook from "~/components/node/DiscordWebhook.vue"
-import NodeLiteralUrl from "~/components/node/LiteralUrl.vue"
-import NodeLoadImage from "~/components/node/LoadImage.vue"
-import NodeUploadImage from "~/components/node/UploadImage.vue"
-import NodeUrlToText from "~/components/node/UrlToText.vue"
-import NodeTts from "~/components/node/Tts.vue"
-import NodeDisplayAudio from "~/components/node/DisplayAudio.vue"
-import NodeImageToVideo from "~/components/node/ImageToVideo.vue"
-import NodeCombineVideo from "~/components/node/CombineVideos.vue"
-import NodeAddAudio from "~/components/node/AddAudio.vue"
-import NodeDisplayVideo from "~/components/node/DisplayVideo.vue"
-import NodeLiteralNumber from "~/components/node/LiteralNumber.vue"
-import NodeDuration from "~/components/node/AudioDuration.vue"
-import NodeMath from "~/components/node/Math.vue"
-
-
 import type { Component } from "vue";
-import { markRaw } from "vue";
 import { type SocketClick, inject_key, type SocketClickInput, type SocketClickOutput } from "~/lib/socket_click";
+import { possible_nodes } from "~/lib/nodes";
 
 interface Connection {
     from: HTMLElement,
@@ -76,153 +53,10 @@ interface NodeInstance {
 }
 let nodes: Ref<NodeInstance[]> = ref([]);
 
-interface NodeItem {
-    type: Component,
-    color: string,
-    name: string,
-    divider?: boolean,
-    tip: string,
-}
-let possible_nodes: NodeItem[] = [
-    {
-        type: markRaw(NodeTextGeneration),
-        color: NODE_AI,
-        name: "Text Generation",
-        tip: "Use a LLM to generate text output based on inputs"
-    },
-    {
-        type: markRaw(NodeLiteralString),
-        color: NODE_CONSTANT,
-        name: "Text",
-        tip: "Constant text"
-    },
-    {
-        type: markRaw(NodeSystemPresets),
-        color: NODE_CONSTANT,
-        name: "System Prompts",
-        tip: "Predefined system prompts for common tasks."
-    },
-    {
-        type: markRaw(NodeDisplayString),
-        color: NODE_DISPLAY,
-        name: "Show String",
-        tip: "Show the input string and pass it along, also allows you to trigger the flow."
-    },
-    {
-        divider: true,
-        type: markRaw(NodeImageGenerationCloudflare),
-        color: NODE_AI,
-        name: "Image Generation (Cloudflare)",
-        tip: "Use a AI to generate image output based on inputs using workers ai (quite slow)"
-    },
-    {
-        type: markRaw(NodeImageGenerationDeepnarration),
-        color: NODE_AI,
-        name: "Image Generation (Deepnarration)",
-        tip: "Use a AI to generate image output based on inputs using matisses gpu (quite fast)"
-    },
-    {
-        type: markRaw(NodeInputImage),
-        color: NODE_CONSTANT,
-        name: "Image File",
-        tip: "Load a image file from your computer!"
-    },
-    {
-        type: markRaw(NodeDisplayImage),
-        color: NODE_DISPLAY,
-        name: "Show Image",
-        tip: "Show the input image and pass it along, also allows you to trigger the flow."
-    },
-    {
-        divider: true,
-        type: markRaw(NodeLiteralUrl),
-        color: NODE_CONSTANT,
-        name: "Url",
-        tip: "Constant url for a image"
-    },
-    {
-        type: markRaw(NodeLoadImage),
-        color: NODE_ACTION,
-        name: "Load Image",
-        tip: "Load image from a url"
-    },
-    {
-        type: markRaw(NodeUploadImage),
-        color: NODE_ACTION,
-        name: "Upload Image",
-        tip: "Upload image to imgbb.com as to get a url"
-    },
-    {
-        type: markRaw(NodeUrlToText),
-        color: NODE_LOCAL,
-        name: "Url To Text",
-        tip: "Convert a url to text, this is simply a type cast."
-    },
-    {
-        divider: true,
-        type: markRaw(NodeTts),
-        color: NODE_AI,
-        name: "Tts",
-        tip: "Convert text to spoken sound"
-    },
-    {
-        type: markRaw(NodeDisplayAudio),
-        color: NODE_DISPLAY,
-        name: "Listen to Aduio",
-        tip: "Lets you listen to your audio"
-    },
-    {
-        type: markRaw(NodeDuration),
-        color: NODE_LOCAL,
-        name: "Aduio Duration",
-        tip: "Get duration of aduio in seconds"
-    },
-    {
-        divider: true,
-        type: markRaw(NodeImageToVideo),
-        color: NODE_LOCAL,
-        name: "Static Video",
-        tip: "Generate a video of a static image"
-    },
-    {
-        type: markRaw(NodeCombineVideo),
-        color: NODE_LOCAL,
-        name: "Chain Video",
-        tip: "Chain together two videos"
-    },
-    {
-        type: markRaw(NodeAddAudio),
-        color: NODE_LOCAL,
-        name: "Add audio",
-        tip: "Add audio to a video"
-    },
-    {
-        type: markRaw(NodeDisplayVideo),
-        color: NODE_DISPLAY,
-        name: "Watch Video",
-        tip: "Watch your video"
-    },
-    {
-        divider: true,
-        type: markRaw(NodeLiteralNumber),
-        color: NODE_CONSTANT,
-        name: "Number",
-        tip: "Constant number"
-    },
-    {
-        type: markRaw(NodeMath),
-        color: NODE_LOCAL,
-        name: "Math",
-        tip: "Evaluate any js expression with 'x' being your input"
-    },
-    {
-        divider: true,
-        type: markRaw(NodeDiscordWebhook),
-        color: NODE_ACTION,
-        name: "Discord Webhook",
-        tip: "Send a discord webhook with your results."
-    },
-]
+let { data: health_checks } = await useAsyncData(
+    "healthchecks",
+    () => Promise.all(possible_nodes.map((node) => node.healthcheck?.()))
+)
 
 function add_node(comp: Component, x: number, y: number) {
     let max_id = Math.max(...nodes.value.map((node) => node.id))
@@ -258,17 +92,40 @@ function remove_connection(id: number) {
 }
 
 let clicked_last: Ref<SocketClick | null> = ref(null);
+let error = ref(false);
+let error_message = ref("");
 function socket_clicked(socket: SocketClick) {
     if (clicked_last.value === null) {
+        if (socket.io === "output" && socket.kind === "generic") {
+            error.value = true;
+            error_message.value = "Can not use generic output, try providing the generic inputs first.";
+            return;
+        }
+        if (socket.io === "input" && socket.kind === "generic") {
+            error.value = true;
+            error_message.value = "To connect to a generic input please select the output first.";
+            return;
+        }
         clicked_last.value = socket;
     } else {
-        if (clicked_last.value.io === socket.io || clicked_last.value.kind !== socket.kind) {
-            console.log(clicked_last, socket);
+        if (clicked_last.value.io === socket.io) {
+            error.value = true;
+            error_message.value = "Can not connect Input-Input or Output-Output"
             clicked_last.value = null;
             return;
         }
+        if (clicked_last.value.kind !== socket.kind) {
+            if (socket.kind === "generic" && socket.io == "input") {
+                socket.update_kind(clicked_last.value.kind)
+                socket.kind = clicked_last.value.kind;
+            } else {
+                error.value = true;
+                error_message.value = "Sockets need to have the same type.";
+                clicked_last.value = null;
+                return;
+            }
+        }
 
-        console.log(clicked_last, socket);
         let connection_id = Math.random();
         connections.value.push({
             from: clicked_last.value.element,

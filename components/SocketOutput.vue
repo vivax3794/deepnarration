@@ -3,7 +3,9 @@
         <div ref="socket" style="margin-left: calc(100% + 5px);">
             <Socket :kind="kind" @click="clicked" />
         </div>
-        <div style="position: absolute; top: -5px; left: 100%; transform: translateX(-100%);">{{ name }}</div>
+        <div style="position: absolute; top: -5px; left: 100%; white-space: nowrap; transform: translateX(-100%);">{{ name
+        }}
+        </div>
     </div>
 </template>
 
@@ -17,16 +19,16 @@ let props = defineProps<{
     calc: () => Promise<void>,
     value: any,
     dirty: boolean,
+    working?: boolean | undefined,
 }>();
 
 let working: Promise<void> | null = null;
 
 async function get_value(): Promise<any> {
-    if (props.dirty || working !== null) {
+    if (props.dirty || working !== null || props.working === true) {
         if (working === null) {
             working = props.calc();
         }
-        console.log(working);
         await working;
         working = null;
     }
@@ -40,7 +42,6 @@ let make_inp_dirty: (() => void)[] = [];
 let reset_other: (() => void)[] = [];
 let kill_connection: (() => void)[] = [];
 watch(() => props.dirty, () => {
-    console.log("DIRTY CHANGED", props.dirty);
     if (make_inp_dirty === null) return;
     if (props.dirty) make_inp_dirty.forEach((f) => f());
 })
@@ -54,8 +55,6 @@ function reset() {
     // TODO: clear out stuff?
 }
 function reset_full() {
-    console.log("CLEARING OUT CONNECTED!")
-    console.log(reset_other)
     reset_other.forEach((f) => f())
     kill_connection.forEach((f) => f())
 

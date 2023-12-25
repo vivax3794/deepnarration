@@ -15,6 +15,7 @@ export interface SocketClickInput {
     kind: string,
     update_value: (info: OutputToInput, kill_connection: () => void) => void
     data: InputToOutput,
+    update_kind: (kind: string) => void,
 }
 export interface SocketClickOutput {
     element: HTMLElement,

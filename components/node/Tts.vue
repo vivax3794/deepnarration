@@ -23,7 +23,6 @@ async function calc() {
 
     working.value = true;
     result.value = await $fetch(`https://api.streamelements.com/kappa/v2/speech?voice=Amy&text=${text.value}`);
-    console.log(result.value);
     working.value = false;
 }
 </script>

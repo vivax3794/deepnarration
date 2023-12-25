@@ -44,7 +44,8 @@ async function calc() {
             "-f", "concat",
             "-safe", "0",
             "-i", "list.txt",
-            "-c", "copy",
+            "-c:v", "libx264",
+            "-c:a", "copy",
             "output.mp4"
         ], 1000);
         let data = await ffmpeg.readFile("output.mp4");

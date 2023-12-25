@@ -2,9 +2,13 @@
     <div id="border" :class="{ animated_border: working || no_cache, static_border: dirty && !working && !no_cache }">
         <v-sheet id="node" :elevation="24" :color="held ? 'yellow-darken-4' : color" rounded width="max-content"
             @contextmenu="open_menu">
-            <h1 id="" @mousedown="start_hold">{{ title }}</h1>
+            <div @mousedown="start_hold" style="min-height: 20px; padding-left: 20px">
+                <h1>{{ title }}</h1>
+            </div>
 
-            <slot></slot>
+            <div style="padding: 0px 20px;">
+                <slot></slot>
+            </div>
         </v-sheet>
         <v-menu activator="parent" v-model="menu" :open-on-click="false">
             <v-list>
@@ -56,7 +60,6 @@ let delta_y = 0;
 
 let no_cache = ref(false);
 watch(() => props.dirty, () => {
-    console.log(no_cache.value, !props.dirty);
     if (no_cache.value && !props.dirty) setTimeout(() => emit("update:dirty", true), 100);
 })
 
@@ -98,7 +101,7 @@ let border_color = computed(() => {
 
 <style scoped>
 #node {
-    padding: 20px;
+    padding: 5px 0px;
 
     border: 100px;
     border-color: red;

@@ -19,7 +19,6 @@ let dirty = ref(true);
 
 let url = ref("");
 watch(() => input.value, () => {
-    console.log(input.value);
     URL.revokeObjectURL(url.value);
     if (input.value !== undefined && input.value.size !== 0) url.value = URL.createObjectURL(input.value)
 })

@@ -19,7 +19,6 @@ let dirty = ref(true);
 
 async function calc() {
     dirty.value = false;
-    console.log(input_element.value);
     await input_element.value?.calc();
 }
 </script>
