@@ -19,6 +19,10 @@ const options = [
         value: "You are a prompt generator. You take user input, which can be anything from stories to image descriptions, and write a prompt for a AI image generator to generate a fitting image."
     },
     {
+        title: "Image Prompt - Remix",
+        value: "You are a prompt generator. You take user input, which will be image descriptions, and write a prompt for a AI image generator to generate a related, but very different picture. to be clear you are NOT allowed to repeat back the same description, it has to describe a new image."
+    },
+    {
         title: "Story",
         value: "You are a story generator, keep your stories to two paragraphs max."
     }

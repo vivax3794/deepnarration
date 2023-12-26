@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
                 "Authorization": `Bearer ${token_ai}`,
             },
             body: {
-                prompt
+                prompt: prompt,
             }
         }
     ), { retries: 5 });

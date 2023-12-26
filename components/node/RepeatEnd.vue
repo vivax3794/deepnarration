@@ -1,11 +1,10 @@
 <template>
-    <NodeBase title="Fold End" :color="NODE_CONTROL_FLOW" v-model:dirty="dirty" v-bind="$attrs" :working="working">
+    <NodeBase title="Repeat End" :color="NODE_CONTROL_FLOW" v-model:dirty="dirty" v-bind="$attrs" :working="working">
         <div style="width: 200px"></div>
         <SocketInput name="Repeats" kind="number" v-model:dirty="dirty" v-model="repeats" ref="repeats_element" />
-        <SocketInput name="Fold" kind="fold" v-model:dirty="fold_dirty" v-model="fold_data" ref="fold_element" />
-        <SocketInput v-for="index in value_kinds.length" generic :name="`Result ${index}`"
-            v-model:kind="value_kinds[index - 1]" v-model:dirty="input_dirty[index - 1]" v-model="result_values[index - 1]"
-            ref="result_elements" />
+        <SocketInput name="Repeat" kind="repeat" v-model:dirty="fold_dirty" v-model="fold_data" ref="fold_element" />
+        <SocketInput v-for="index in value_kinds.length" :name="`Result ${index}`" v-model:kind="value_kinds[index - 1]"
+            v-model:dirty="input_dirty[index - 1]" v-model="result_values[index - 1]" ref="result_elements" />
 
         <SocketOutput v-for="index in value_kinds.length " :name="`Final ${index}`" :kind="value_kinds[index - 1]"
             :dirty="dirty" :value="result_values[index - 1]" :calc="calc" />

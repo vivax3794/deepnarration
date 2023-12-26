@@ -22,9 +22,6 @@ export default defineEventHandler(async (event) => {
             body: {
                 messages: [
                     { role: "system", content: system },
-                    { role: "system", content: `I like the number: ${Math.random()}` },
-                    { role: "system", content: `You look like a: ${Math.random() * 1000}` },
-                    { role: "system", content: `Try to answer more like: ${Math.random() * 45}` },
                     { role: "user", content: prompt }
                 ]
             }

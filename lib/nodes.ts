@@ -9,6 +9,8 @@ import NodeDisplayImage from "~/components/node/DisplayImage.vue";
 import NodeTextGeneration from "~/components/node/TextGeneration.vue";
 import NodeImageGenerationCloudflare from "~/components/node/ImageGenerationCloudflare.vue";
 import NodeImageGenerationDeepnarration from "~/components/node/ImageGenerationDeepnarration.vue";
+import NodeReTheme from "~/components/node/ReTheme.vue";
+// import NodeImageGenerationStable from "~/components/node/ImageGenerationStable.vue";
 import NodeDiscordWebhook from "~/components/node/DiscordWebhook.vue"
 import NodeLiteralUrl from "~/components/node/LiteralUrl.vue"
 import NodeLoadImage from "~/components/node/LoadImage.vue"
@@ -24,8 +26,8 @@ import NodeLiteralNumber from "~/components/node/LiteralNumber.vue"
 import NodeDuration from "~/components/node/AudioDuration.vue"
 import NodeMath from "~/components/node/Math.vue"
 import NodeRouter from "~/components/node/Router.vue"
-import NodeFold from "~/components/node/Fold.vue"
-import NodeFoldEnd from "~/components/node/FoldEnd.vue"
+import NodeRepeat from "~/components/node/Repeat.vue"
+import NodeRepeatEnd from "~/components/node/RepeatEnd.vue"
 import NodeEmptyVideo from "~/components/node/EmptyVideo.vue"
 
 interface NodeItem {
@@ -41,6 +43,20 @@ async function cloudflare(): Promise<string | undefined> {
     let healthy = await $fetch("/api/cloudflare_health");
     if (healthy) return undefined
     return "Missing CLOUDFLARE_AI_TOKEN or CLOUDFLARE_ACCOUNT env vars."
+}
+
+async function stable(): Promise<string | undefined> {
+    let healthy = await $fetch("/api/stable/health");
+    if (healthy) return undefined
+    return "Missing STABLE_TOKEN env var."
+}
+async function deepnarration(): Promise<string | undefined> {
+    try {
+        await $fetch("https://deepnarration.matissetec.dev/queue");
+        return undefined;
+    } catch {
+        return "Could not reach deepnarration.matissetec.dev"
+    }
 }
 
 export let possible_nodes: NodeItem[] = [
@@ -77,19 +93,26 @@ export let possible_nodes: NodeItem[] = [
         tip: "Use a AI to generate image output based on inputs using workers ai (quite slow)",
         healthcheck: cloudflare
     },
+    // {
+    //     type: markRaw(NodeImageGenerationStable),
+    //     color: NODE_AI,
+    //     name: "Image Generation (Stablediffusion)",
+    //     tip: "Use a AI to generate image output based on inputs using stable difussion ai",
+    //     healthcheck: stable
+    // },
     {
         type: markRaw(NodeImageGenerationDeepnarration),
         color: NODE_AI,
         name: "Image Generation (Deepnarration)",
         tip: "Use a AI to generate image output based on inputs using matisses gpu (quite fast)",
-        healthcheck: async () => {
-            try {
-                await $fetch("https://deepnarration.matissetec.dev/queue");
-                return undefined;
-            } catch {
-                return "Could not reach deepnarration.matissetec.dev"
-            }
-        }
+        healthcheck: deepnarration,
+    },
+    {
+        type: markRaw(NodeReTheme),
+        color: NODE_AI,
+        name: "Image Retheme (Deepnarration)",
+        tip: "Retheme a image based on a prompt.",
+        healthcheck: deepnarration,
     },
     {
         type: markRaw(NodeInputImage),
@@ -212,16 +235,16 @@ export let possible_nodes: NodeItem[] = [
         tip: "Route your connections for a nicer graph!"
     },
     {
-        type: markRaw(NodeFold),
+        type: markRaw(NodeRepeat),
         color: NODE_CONTROL_FLOW,
-        name: "Fold",
+        name: "Repeat",
         tip: "Repeat a action on a set of values."
     },
     {
-        type: markRaw(NodeFoldEnd),
+        type: markRaw(NodeRepeatEnd),
         color: NODE_CONTROL_FLOW,
-        name: "Fold End",
-        tip: "Second half of the Fold construct"
+        name: "Repeat End",
+        tip: "Second half of the Repeat construct"
     },
 ]
 

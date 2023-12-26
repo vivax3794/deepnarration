@@ -1,7 +1,7 @@
 <template>
-    <NodeBase title="Fold" :color="NODE_CONTROL_FLOW" v-model:dirty="dirty" v-bind="$attrs" :working="working">
+    <NodeBase title="Repeat" :color="NODE_CONTROL_FLOW" v-model:dirty="dirty" v-bind="$attrs" :working="working">
         <div style="width: 200px"></div>
-        <SocketOutput name="Fold End" kind="fold" :dirty="fold_dirty" :value="fold_data"
+        <SocketOutput name="Repeat End" kind="repeat" :dirty="fold_dirty" :value="fold_data"
             :calc="async () => { fold_data.data_kinds = value_kinds.slice(0, -1); fold_dirty = false }" />
         <SocketOutput name="Invalidate Cache" kind="cache" :dirty="dirty_cache" :value="null"
             :calc="async () => { dirty_cache = false }" />
