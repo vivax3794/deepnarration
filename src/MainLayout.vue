@@ -4,11 +4,15 @@
       <v-app-bar-nav-icon @click.stop="navdraw = !navdraw"></v-app-bar-nav-icon>
       <v-app-bar-title>Deepnarration</v-app-bar-title>
 
-      <v-avatar id="avatar"
-        :image="`https://cdn.discordapp.com/avatars/${discord_info.user_id}/${discord_info.avatar}.png`" alt="Avatar">
+      <router-link to="/user">
+        <v-avatar id="avatar"
+          :image="`https://cdn.discordapp.com/avatars/${discord_info.user_id}/${discord_info.avatar}.png`" alt="Avatar">
 
-      </v-avatar>
-      <div id="username">{{ discord_info.username }}</div>
+        </v-avatar>
+      </router-link>
+      <router-link to="/user" style="margin-left: 5px">
+        <div id="username">{{ discord_info.username }}</div>
+      </router-link>
     </v-app-bar>
     <v-navigation-drawer expand-on-hover rail v-model="navdraw">
       <v-list nav>

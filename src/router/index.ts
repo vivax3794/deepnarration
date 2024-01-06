@@ -54,6 +54,10 @@ const routes = [
         path: "/rethemeImage",
         component: () => import("@/views/RethemeImage.vue"),
       },
+      {
+        path: "/user",
+        component: () => import("@/views/user.vue"),
+      },
     ]
   },
   {
