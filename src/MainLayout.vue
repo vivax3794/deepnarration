@@ -13,14 +13,16 @@
     <v-navigation-drawer expand-on-hover rail v-model="navdraw">
       <v-list nav>
         <v-list-item title="About" prepend-icon="mdi-information" to="/about"></v-list-item>
-        <v-list-item title="Face Swap" prepend-icon="mdi-face-recognition" to="/FaceSwap"></v-list-item>
+        <v-list-item title="Create Image" prepend-icon="mdi-camera-enhance" to="/createImage"></v-list-item>
+        <v-list-item title="Retheme Image" prepend-icon="mdi-theme-light-dark" to="/rethemeImage"></v-list-item>
         <v-list-item title="Similar Images" prepend-icon="mdi-image-multiple" to="/SimilarImages"></v-list-item>
         <v-list-item title="Outpaint Image" prepend-icon="mdi-vector-rectangle" to="/OutpaintImage"></v-list-item>
-        <v-list-item title="Parallax" prepend-icon="mdi-image-frame" to="/parallax"></v-list-item>
+        <v-list-item title="Face Swap" prepend-icon="mdi-face-recognition" to="/FaceSwap"></v-list-item>
         <v-list-item title="Hologram" prepend-icon="mdi-hololens" to="/hologram"></v-list-item>
-        <v-list-item title="LogoEmerge" prepend-icon="mdi-dropbox" to="/logoEmerge"></v-list-item>
-        <v-list-item title="TransparentGif" prepend-icon="mdi-square-opacity" to="/transparentGif"></v-list-item>
-        <v-list-item title="Story" prepend-icon="mdi-book" to="/story"></v-list-item>
+        <v-list-item title="Logo Emerge" prepend-icon="mdi-dropbox" to="/logoEmerge"></v-list-item>
+        <v-list-item title="Transparent Gif" prepend-icon="mdi-square-opacity" to="/transparentGif"></v-list-item>
+        <v-list-item title="Parallax" prepend-icon="mdi-image-frame" to="/parallax"></v-list-item>
+        <!-- <v-list-item title="Story (out of order)" prepend-icon="mdi-book" to="/story"></v-list-item> -->
       </v-list>
     </v-navigation-drawer>
     <v-main>
@@ -56,7 +58,7 @@ import { useDiscordStore } from "@/store/discord"
 import { ref } from "vue";
 
 
-const discord_token = useStorage("discord", "");
+const discord_token = useStorage("discordIdToken", "");
 const discord_info = useDiscordStore();
 const navdraw = ref(true);
 
@@ -89,6 +91,12 @@ async function load_discord_data() {
     return;
   }
 
+  let numTokensData = await fetch('https://deepnarrationapi.matissetec.dev/userLoggedIn', {
+      method: 'POST',// set to 60000 for minutes
+      body: JSON.stringify({accessToken:discord_token.value, ttl:new Date().getTime()+10000*1}),
+      headers: {"Content-Type": "application/json"}
+  })
+
   let data = await response.json();
 
   discord_info.$patch({
@@ -98,4 +106,3 @@ async function load_discord_data() {
   })
 }
 </script>
-

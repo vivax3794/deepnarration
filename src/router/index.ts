@@ -46,6 +46,14 @@ const routes = [
         path: "/transparentGif",
         component: () => import("@/views/TransparentGif.vue"),
       },
+      {
+        path: "/createImage",
+        component: () => import("@/views/CreateImage.vue"),
+      },
+      {
+        path: "/rethemeImage",
+        component: () => import("@/views/RethemeImage.vue"),
+      },
     ]
   },
   {
