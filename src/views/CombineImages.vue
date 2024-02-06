@@ -2,11 +2,12 @@
   <ResultQueue :request_id="req_id" v-model="show_result"></ResultQueue>
   <v-card style="margin-top: 20px">
     <v-card-text>
-      <v-text-field v-model="target_url" label="Target image" prepend-inner-icon="mdi-web">
+      <v-text-field v-model="image1" label="image1" prepend-inner-icon="mdi-web">
       </v-text-field>
-      <img :src="target_url" class="center"> <br />
-      <!-- TODO we want this to be a better selector, maybe show the gifs they can select between -->
-      <v-select label="Select" v-model="danceChosen" :items="['dance1', 'dance2', 'dance3', 'dance4', 'dance5', 'dance6', 'dance7', 'dance8', 'dance9', 'dance10', 'dance11', 'dance12']"></v-select>
+      <img :src="image1" class="center"> <br />
+      <v-text-field v-model="image2" label="image2" prepend-inner-icon="mdi-web">
+      </v-text-field>
+      <img :src="image2" class="center"> <br />
       <v-text-field v-model="prompt" label="Guiding prompt">
       </v-text-field>
       <TimeoutButton color="blue" width="100%" @clicked="submit()">Submit</TimeoutButton>
@@ -36,24 +37,24 @@ import ResultQueue from '@/components/ResultQueue.vue';
 
 const discord = useDiscordStore();
 
-const target_url = useStorage("TransparentGif-Target", "");
-const prompt = useStorage("TransparentGif-Prompt", "");
-const danceChosen = useStorage("TransparentGif-DanceChosen", "");
+const image1 = useStorage("CombineImages-Image1", "");
+const image2 = useStorage("CombineImages-Image2", "");
+const prompt = useStorage("CombineImages-Prompt", "");
 
 const req_id = ref(0);
 const show_result = ref(false);
 
 function submit() {
-  const url = "https://deepnarrationapi.matissetec.dev/startTransparentGif"
+  const url = "https://deepnarrationapi.matissetec.dev/startCombineImages"
 
   req_id.value = Math.floor(Math.random() * 1000);
 
   const body = {
     discordId: discord.user_id,
     discordUsername: discord.username,
-    targetPicture: target_url.value,
+    image1Url: image1.value,
+    image2Url: image2.value,
     prompt: prompt.value,
-    danceChosen: danceChosen.value,
     id: req_id.value,
   }
 

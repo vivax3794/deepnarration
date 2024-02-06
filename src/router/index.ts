@@ -55,6 +55,18 @@ const routes = [
         component: () => import("@/views/RethemeImage.vue"),
       },
       {
+        path: "/VideoBackgroundRemoval",
+        component: () => import('@/views/VideoBackgroundRemoval.vue')
+      },
+      {
+        path: "/ImageBackgroundRemoval",
+        component: () => import('@/views/ImageBackgroundRemoval.vue')
+      },
+      {
+        path: "/CombineImages",
+        component: () => import('@/views/CombineImages.vue')
+      },
+      {
         path: "/user",
         component: () => import("@/views/user.vue"),
       },
