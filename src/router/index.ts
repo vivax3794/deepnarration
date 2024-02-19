@@ -14,13 +14,17 @@ const routes = [
         path: "/about",
         component: () => import("@/views/About.vue"),
       },
-      {
-        path: "/story",
-        component: () => import("@/views/Story.vue"),
-      },
+      // {
+      //   path: "/story",
+      //   component: () => import("@/views/Story.vue"),
+      // },
       {
         path: "/faceSwap",
         component: () => import("@/views/FaceSwap.vue"),
+      },
+      {
+        path: "/faceSwapImage",
+        component: () => import("@/views/FaceSwapImage.vue"),
       },
       {
         path: "/similarImages",

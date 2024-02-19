@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <ResultQueue :request_id="req_id" v-model="show_result"></ResultQueue>
   <div id="scenes" class="margin">
     <v-form ref="form">
@@ -130,4 +130,4 @@ async function submit() {
   }
 }
 
-</script>
+</script> -->
