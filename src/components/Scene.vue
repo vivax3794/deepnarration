@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div id="container">
     <v-btn id="delete" color="red" icon="mdi-delete" variant="plain" size="x-large" @click="$emit('delete')"></v-btn>
     <v-card>
@@ -150,4 +150,4 @@ function delete_image(index: number) {
     addImage();
   }
 }
-</script>
+</script> -->

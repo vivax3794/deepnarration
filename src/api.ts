@@ -1,80 +1,80 @@
 import { useDiscordStore } from "./store/discord";
-import { useStoryStore } from "./store/story";
+// import { useStoryStore } from "./store/story";
 
-export async function submitImagesVideo(): Promise<number | null> {
-  const url = "https://deepnarrationapi.matissetec.dev/getImagesVideo";
+// export async function submitImagesVideo(): Promise<number | null> {
+//   const url = "https://deepnarrationapi.matissetec.dev/getImagesVideo";
 
-  const discord = useDiscordStore();
-  const story = useStoryStore();
+//   const discord = useDiscordStore();
+//   // const story = useStoryStore();
 
-  const imagePrompts = [];
-  const themes = [];
-  const ttsTiming = [];
-  let strengths = [];
+//   const imagePrompts = [];
+//   const themes = [];
+//   const ttsTiming = [];
+//   let strengths = [];
 
-  let time = 0;
-  let last_strength = null;
-  for (const scene of story.scenes) {
-    imagePrompts.push({
-      "prompt": scene.text.replaceAll("\n", ".")
-    });
-    themes.push("None");
+//   let time = 0;
+//   let last_strength = null;
+  // for (const scene of story.scenes) {
+  //   imagePrompts.push({
+  //     "prompt": scene.text.replaceAll("\n", ".")
+  //   });
+  //   themes.push("None");
 
-    if (story.tts) {
-      ttsTiming.push(-1);
-    } else {
-      ttsTiming.push(scene.duration);
-    }
+  //   if (story.tts) {
+  //     ttsTiming.push(-1);
+  //   } else {
+  //     ttsTiming.push(scene.duration);
+  //   }
 
-    if (!story.peak_detection) {
-      if (last_strength !== null) {
-        strengths.push(`${Math.floor(time * 10) - 1}:(${last_strength})`);
-      }
-      strengths.push(`${Math.floor(time * 10)}:(${scene.strength})`);
-      last_strength = scene.strength;
-    }
+  //   if (!story.peak_detection) {
+  //     if (last_strength !== null) {
+  //       strengths.push(`${Math.floor(time * 10) - 1}:(${last_strength})`);
+  //     }
+  //     strengths.push(`${Math.floor(time * 10)}:(${scene.strength})`);
+  //     last_strength = scene.strength;
+  //   }
 
-    time += scene.duration;
-  }
+  //   time += scene.duration;
+  // }
 
-  if (story.peak_detection) {
-    strengths = story.peaks;
-  }
+  // if (story.peak_detection) {
+  //   strengths = story.peaks;
+  // }
 
-  const request_id = Math.floor(Math.random() * 100);
-  const body: any = {
-    audioName: "",
-    discordName: `<@${discord.user_id}>`,
-    discordUsername: discord.username,
-    strength: strengths.join(","),
-    useTts: story.tts,
+  // const request_id = Math.floor(Math.random() * 100);
+  // const body: any = {
+  //   audioName: "",
+  //   discordName: `<@${discord.user_id}>`,
+  //   discordUsername: discord.username,
+  //   strength: strengths.join(","),
+  //   useTts: story.tts,
 
-    imagePrompts: imagePrompts,
-    themes: themes,
-    ttsTimings: ttsTiming,
+  //   imagePrompts: imagePrompts,
+  //   themes: themes,
+  //   ttsTimings: ttsTiming,
 
-    id: request_id,
-  };
+  //   id: request_id,
+  // };
 
-  if (!story.generate_images) {
-    body.images = story.scenes.map((scene) => scene.images.map((image) => image.url));
-  }
+  // if (!story.generate_images) {
+  //   body.images = story.scenes.map((scene) => scene.images.map((image) => image.url));
+  // }
 
-  if (story.peak_detection) {
-    body.audioName = await upload_audio(story.audio_file!);
-  }
+  // if (story.peak_detection) {
+  //   body.audioName = await upload_audio(story.audio_file!);
+  // }
 
-  const response = await fetch(url, {
-    method: "Post",
-    body: JSON.stringify(body)
-  });
+  // const response = await fetch(url, {
+  //   method: "Post",
+  //   body: JSON.stringify(body)
+  // });
 
-  if (response.status === 200) {
-    return request_id;
-  } else {
-    return null;
-  }
-}
+  // if (response.status === 200) {
+  //   return request_id;
+  // } else {
+  //   return null;
+  // }
+// }
 
 interface JobStatus {
   position: number | null,
